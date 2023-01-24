@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Machine Learning Experiment</title>
+	<style type="text/css">
+		body { margin: 0; padding: 0; background: #999;}
+		canvas {
+			display: block; 
+			margin: 5px; 
+		}
+		canvas, img {
+			image-rendering: optimizeSpeed;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: optimize-contrast;
+			image-rendering: pixelated;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+		#baseCanvas {
+			position: absolute;
+			z-index: 1;
+			background: #f9feff;
+		}
+		#graphPointsCanvas {
+			position: absolute;
+			z-index: 3;
+		}
+		#graphModelCanvas {
+			position: absolute;
+			z-index: 2;
+		}
+		#lineRespCanvas {
+			position: absolute;
+			z-index: 3;
+		}
+		#inputText{
+			position: absolute;
+			z-index: 4;
+		}
+	</style>
+	<script src='input.js'></script>
+	<script src='graph.js'></script>
+	<script src='saveLoad.js'></script>
+	<script src='display.js'></script>
+	<script src='commandLine.js'></script>
+	<script src='loader.js'></script>
+</head>
+<body>
+	<canvas id="baseCanvas" width="1024" height="932.5">
+	</canvas>
+	<canvas id="graphPointsCanvas" width="1024" height="932.5">
+	</canvas>
+	<canvas id="graphModelCanvas" width="1024" height="932.5">
+	</canvas>
+	<canvas id="lineRespCanvas" width="1024" height="932.5">
+	</canvas>
+	<input type="file" id="fileElem" accept='text/xml' style="display:none" onchange="handleFiles(this.files)">
+	<img id="saveLoadIcons" width="0" height="0" src="saveLoadIcons.png">
+	<form name="myform" action="javascript:void(0);" onsubmit="getAction();">
+		<input type="text" id="inputText">
+	</form>
+</body>
+</html>
