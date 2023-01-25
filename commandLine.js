@@ -43,7 +43,7 @@ function doCommand(command)
 	}
 	else
 	{
-		response[1] = ["Command Not Recognized!"]
+		response[1] = ["Command Not Recognized!"];
 	}
 	
 	addResponse(response);

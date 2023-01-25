@@ -47,6 +47,7 @@ function getMouse(e)
 function inputHandler(input)
 {
 	var clickUpVal;
+	var temp;
 	
 	if (input[0] == "mouse move")
 	{
@@ -62,27 +63,64 @@ function inputHandler(input)
 		
 		if (clickDownCarry[0] == clickUpVal[0])
 		{
-			if (clickDownCarry[0] == "save button")
+			if (clickDownCarry[0] == "graph")
 			{
-				saveFile();
-			}
-			else if (clickDownCarry[0] == "load button")
-			{
-				openLoadFile();
-			}
-			else if (clickDownCarry[0] == "graph")
-			{
+				temp = displayPointToGraphPoint(input[1], input[2]);
 				placeGraphPoint(
-					((input[1] - graphBorder - graphInnerMargin - margin) * 2 / graphSize) - 1, 
-					((graphSize + graphBorder + graphInnerMargin + margin - input[2]) * 2 / graphSize) - 1
+					temp[0], 
+					temp[1]
 				);
 				drawPointOnGraph(graphPointsLen - 1);
 			}
-			else if (clickDownCarry[0] == "graphSideBar" && clickDownCarry[1] == clickUpVal[1] && clickDownCarry[1] >= 0 && clickDownCarry[1] < labelSwatchesLen)
+			if (
+				clickDownCarry[0] == "XAxis+" ||
+				clickDownCarry[0] == "XAxis-" ||
+				clickDownCarry[0] == "YAxis+" ||
+				clickDownCarry[0] == "YAxis-"
+				
+			)
 			{
-				selectedLabel = clickDownCarry[1];
-				drawLabelSideBar();
+				if (clickDownCarry[0] == "XAxis+")
+				{
+					graphXAxis++;
+					
+					if(graphXAxis > featureCount)
+					{
+						graphXAxis = 0;
+					}
+				}
+				if (clickDownCarry[0] == "XAxis-")
+				{
+					graphXAxis--;
+					
+					if(graphXAxis < 0)
+					{
+						graphXAxis = featureCount;
+					}
+				}
+				if (clickDownCarry[0] == "YAxis+")
+				{
+					graphYAxis++;
+					
+					if(graphYAxis > featureCount)
+					{
+						graphYAxis = 0;
+					}
+				}
+				if (clickDownCarry[0] == "YAxis-")
+				{
+					graphYAxis--;
+					
+					if(graphYAxis < 0)
+					{
+						graphYAxis = featureCount;
+					}
+				}
+				
+				drawGraphAxisBar();
+				drawAllPointsOnGraph();
 			}
+			//console.log(clickDownCarry[0])
 		}
 	}
 	else if (input[0] = "command line arguement")
@@ -100,51 +138,55 @@ function findClick(input)
 {
 	//detect if the graph was hit
 	if (
-		input[1] >= graphBorder + graphInnerMargin + margin &&
-		input[1] <= graphBorder + graphInnerMargin + margin + graphSize &&
+		input[1] >= graphBorder + graphInnerMargin + margin + graphAxisBarWidth &&
+		input[1] <= graphBorder + graphInnerMargin + margin + graphAxisBarWidth + graphSize &&
 		input[2] >= graphBorder + graphInnerMargin + margin &&
 		input[2] <= graphBorder + graphInnerMargin + margin + graphSize 
 	)
 	{
 		return ["graph"];
 	}
-	//detect if the graph sidebar was hit
+	//detect graph's Xaxis block was hit
 	else if (
-		input[1] >= margin + (graphBorder + graphInnerMargin) * 2 + graphSize &&
-		input[1] <= margin + (graphBorder + graphInnerMargin) * 2 + graphSize + labelBarSize &&
-		input[2] >= margin + labelBarSize - (margin + selectedLabelSwatchRad) &&
-		input[2] <= margin + (graphBorder + graphInnerMargin) * 2 + graphSize - labelBarSize 
+		input[1] >= margin + graphBorder + graphAxisBarWidth &&
+		input[1] <= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth &&
+		input[2] >= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize &&
+		input[2] <= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth
 	)
 	{
-		return [
-			"graphSideBar",
-			Math.floor(
-				(
-					(input[2] - margin - labelBarSize) / 
-					(margin + selectedLabelSwatchRad * 2)
-				) + 0.5
-			)
-		];
+		if (input[1] >= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize)
+		{
+			return ["XAxis+"];
+		}
+		else if (input[1] <= margin + graphBorder + graphAxisBarWidth * 2)
+		{
+			return ["XAxis-"];
+		}
+		else
+		{
+			return ["XAxis"];
+		}
 	}
-	//detect if it hit the save button
+	//detect graph's Yaxis block was hit
 	else if (
-		input[1] >= margin + (graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2 + margin) &&
-		input[1] <= margin + (graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2 + margin) + buttonBorder * 2 + buttonSize &&
-		input[2] >= margin * 2 + (graphBorder + graphInnerMargin) * 2 + graphSize &&
-		input[2] <= margin * 2 + (graphBorder + graphInnerMargin) * 2 + graphSize + buttonBorder * 2 + buttonSize
+		input[1] >= margin + graphBorder &&
+		input[1] <= margin + graphBorder + graphAxisBarInnerWidth &&
+		input[2] >= margin + graphBorder &&
+		input[2] <= margin + graphBorder + graphSize + graphInnerMargin * 2 
 	)
 	{
-		return ["save button"];
-	}
-	//detect if it hit the load button
-	else if(
-		input[1] >= margin + (graphBorder + graphInnerMargin) * 2 + graphSize - (buttonBorder * 2 + buttonSize) &&
-		input[1] <= margin + (graphBorder + graphInnerMargin) * 2 + graphSize - (buttonBorder * 2 + buttonSize) + buttonBorder * 2 + buttonSize &&
-		input[2] >= margin * 2 + (graphBorder + graphInnerMargin) * 2 + graphSize &&
-		input[2] <= margin * 2 + (graphBorder + graphInnerMargin) * 2 + graphSize + buttonBorder * 2 + buttonSize
-	)
-	{
-		return ["load button"];
+		if (input[2] <= margin + graphBorder + graphAxisBarInnerWidth)
+		{
+			return ["YAxis+"];
+		}
+		else if (input[2] >= margin + graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth)
+		{
+			return ["YAxis-"];
+		}
+		else
+		{
+			return ["YAxis"];
+		}
 	}
 	else
 	{

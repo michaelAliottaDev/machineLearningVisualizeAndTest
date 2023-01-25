@@ -32,9 +32,9 @@ function init()
 	
 	saveLoadIcons = document.getElementById("saveLoadIcons");
 	
+	graphInit();
 	displayInit();
 	inputInit();
-	graphInit();
 	saveLoadInit();
 	commandLineInit();
 }

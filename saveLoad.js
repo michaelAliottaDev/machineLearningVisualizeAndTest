@@ -33,15 +33,35 @@ function saveFile()
 	
 	for (var i = 0; i < graphPointsLen; i++)
 	{
-		tempText += (
-			'\t<point>\n\t\t<xCrd>' + 
-			graphPoints[i][0] + 
-			'</xCrd>\n\t\t<yCrd>' + 
-			graphPoints[i][1] + 
-			'</yCrd>\n\t\t<label>' + 
-			graphPoints[i][2] + 
-			'</label>\n\t</point>\n'
-		);
+		tempText += '\t<point>\n';
+		
+		for (var j = 0; j <= featureCount; j++)
+		{
+			if (graphPoints[i][j] != undefined)
+			{
+				if (j == 0)
+				{
+					tempText += '\t\t<label>\n';
+				}
+				else
+				{
+					tempText += '\t\t<Feature' + j + '>\n';
+				}
+				
+				tempText += ('\t\t\t' + graphPoints[i][j] + '\n');
+				
+				if (j == 0)
+				{
+					tempText += '\t\t</label>\n';
+				}
+				else
+				{
+					tempText += '\t\t</Feature' + j + '>\n';
+				}
+			}
+		}
+		
+		tempText += '\t</point>\n';
 	}
 	
 	tempText += '</base>';

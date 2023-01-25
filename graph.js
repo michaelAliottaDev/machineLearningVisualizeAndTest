@@ -2,26 +2,31 @@
 
 //an array of graph points
 //always in the form
-//[n][0] = Feature 0 value (X Coordinate) 
-//[n][1] = Feature 1 value (Y Coordinate)
-//[n][2] = Label
+//[n][0] = Label
+//[n][m] = Feature (m - 1)
 var graphPoints;
 var graphPointsLen;
 
-//[n][0] = Bias
-//[n][m] = Feature (m - 1) Weight
-var graphFunction;
+var featureCount;
+
+//always in the form
+//[0] = Bias
+//[1] = Feature (m - 1) weight
+var model;
 
 function graphInit()
 {
 	graphPoints = [];
 	graphPointsLen = 0;
-	graphFunction = [0.0, 1.0, 1.0];
+	
+	featureCount = 1;
 }
 
 function placeGraphPoint(x, y)
 {
-	graphPoints[graphPointsLen] = [x, y, selectedLabel];
+	graphPoints[graphPointsLen] = [];
+	graphPoints[graphPointsLen][graphXAxis] = x;
+	graphPoints[graphPointsLen][graphYAxis] = y;
 	graphPointsLen++;
 }
 
