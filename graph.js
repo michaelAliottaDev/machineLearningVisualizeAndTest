@@ -3,7 +3,7 @@
 //an array of graph points
 //always in the form
 //[n][0] = Label
-//[n][m] = Feature (m - 1)
+//[n][m] = Feature (m)
 var graphPoints;
 var graphPointsLen;
 
@@ -11,7 +11,7 @@ var featureCount;
 
 //always in the form
 //[0] = Bias
-//[1] = Feature (m - 1) weight
+//[1] = Feature (m) weight
 var model;
 
 function graphInit()

@@ -28,14 +28,31 @@ function openLoadFile()
 function saveFile()
 {
 	var tempText = '<base>\n';
+	var tempFeaturesUsed = 0
 	
 	tempText += ('\t<count>' + graphPointsLen + '</count>\n');
 	
 	for (var i = 0; i < graphPointsLen; i++)
 	{
+		for (var j = 1; j <= featureCount; j++)
+		{
+			if (graphPoints[i][j] != undefined)
+			{
+				if (j > tempFeaturesUsed)
+				{
+					tempFeaturesUsed = j;
+				}
+			}
+		}
+	}
+	
+	tempText += ('\t<features>' + tempFeaturesUsed + '</features>\n');
+	
+	for (var i = 0; i < graphPointsLen; i++)
+	{
 		tempText += '\t<point>\n';
 		
-		for (var j = 0; j <= featureCount; j++)
+		for (var j = 0; j <= tempFeaturesUsed; j++)
 		{
 			if (graphPoints[i][j] != undefined)
 			{
@@ -45,7 +62,7 @@ function saveFile()
 				}
 				else
 				{
-					tempText += '\t\t<Feature' + j + '>\n';
+					tempText += '\t\t<feature' + j + '>\n';
 				}
 				
 				tempText += ('\t\t\t' + graphPoints[i][j] + '\n');
@@ -56,7 +73,7 @@ function saveFile()
 				}
 				else
 				{
-					tempText += '\t\t</Feature' + j + '>\n';
+					tempText += '\t\t</feature' + j + '>\n';
 				}
 			}
 		}
@@ -72,18 +89,27 @@ function saveFile()
 
 function loadFile(file)
 {
-	var dataHold;
+	var dataHold = file.getElementsByTagName("point");;
 	
+	featureCount = file.getElementsByTagName("features")[0].innerHTML * 1;
 	graphPointsLen = file.getElementsByTagName("count")[0].innerHTML * 1;
-	dataHold = file.getElementsByTagName("point");
+	graphPoints = [];
 	
 	for (var i = 0; i < graphPointsLen; i++)
 	{
-		graphPoints[i] = [
-			dataHold[i].getElementsByTagName("xCrd")[0].innerHTML * 1.0,
-			dataHold[i].getElementsByTagName("yCrd")[0].innerHTML * 1.0,
-			dataHold[i].getElementsByTagName("label")[0].innerHTML * 1
-		];
+		graphPoints[i] = [];
+		if (dataHold[i].getElementsByTagName("label").length > 0)
+		{
+			graphPoints[i][0] = dataHold[i].getElementsByTagName("label")[0].innerHTML * 1.0;
+		}
+		
+		for (var j = 1; j <= featureCount; j++)
+		{
+			if (dataHold[i].getElementsByTagName("feature" + j).length > 0)
+			{
+				graphPoints[i][j] = dataHold[i].getElementsByTagName("feature" + j)[0].innerHTML * 1.0;
+			}
+		}
 	}
 	
 	drawAllPointsOnGraph();

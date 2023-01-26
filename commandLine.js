@@ -22,8 +22,9 @@ function doCommand(command)
 		response[1] = ["help:", "Show a list of commands and what they do"];
 		response[2] = ["save:", "Save an xml file of the graph to your local drive"];
 		response[3] = ["load:", "Load an xml file of a graph from your local drive and set the current graph to that"];
-		response[4] = ["clear -g:", "Clear the graph"];
-		response[5] = ["clear -c:", "Clear the console"];
+		response[4] = ["show data:", "Output the number of features, number of points on the graph and value of each point to the console"];
+		response[5] = ["clear -g:", "Clear the graph"];
+		response[6] = ["clear -c:", "Clear the console"];
 	}
 	else if (command == "save")
 	{
@@ -32,6 +33,28 @@ function doCommand(command)
 	else if (command == "load")
 	{
 		response[1] = ["Loading From File..."];
+	}
+	else if (command == "show data")
+	{
+		response[1] = ["Features: " + featureCount];
+		response[2] = ["Points: " + graphPointsLen];
+		
+		for (var i = 0; i < graphPoints.length && i < 20; i++)
+		{
+			response[3 + i] = ["Point[" + i + "]:"];
+			
+			for (var j = 0; j < graphPoints[i].length; j++)
+			{
+				if (graphPoints[i][j] !== undefined)
+				{
+					response[3 + i][1 + j] = graphPoints[i][j] + "";
+				}
+				else
+				{
+					response[3 + i][1 + j] = "--";
+				}
+			}
+		}
 	}
 	else if (command == "clear -g")
 	{
@@ -90,12 +113,10 @@ function addResponse(response)
 	
 	for (var i = 0; i < responseOffset - 1; i++)
 	{
-		console.log("i = " + i);
 		lineRecord[i] = [];
 		
 		for (var j = 0; j < response[i].length; j++)
 		{
-			console.log("j = " + j);
 			lineRecord[i][j] = response[i][j];
 		}
 	}

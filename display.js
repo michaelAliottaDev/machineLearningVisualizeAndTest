@@ -72,7 +72,7 @@ function displayInit()
 	buttonSize = 32.0;
 	
 	commandLineRecordTextSize = 14;
-	commandLineRecordTab = 60;
+	commandLineRecordTab = 90;
 	
 	drawGraph();
 	drawGraphAxisBar();
@@ -564,8 +564,6 @@ function drawLinearModel(model)
 		modelCtx.fill();
 		modelCtx.globalAlpha = 1.0;
 	}
-	
-	console.log(boarderPoints);
 }
 
 function drawAllPointsOnGraph()
@@ -603,8 +601,6 @@ function drawPointOnGraph(index)
 			0, 2 * Math.PI
 		);
 		pointsCtx.fill();
-		
-		console.log(graphPoints, tempPoint);
 	}
 }
 
