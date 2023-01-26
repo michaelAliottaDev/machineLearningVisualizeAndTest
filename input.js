@@ -120,7 +120,6 @@ function inputHandler(input)
 				drawGraphAxisBar();
 				drawAllPointsOnGraph();
 			}
-			//console.log(clickDownCarry[0])
 		}
 	}
 	else if (input[0] = "command line arguement")
@@ -134,6 +133,10 @@ function inputHandler(input)
 }
 
 //returns a list of data related to the click
+//runs a series of "hit box checks" and returns [
+//	a keyword indicating the location of the click, 
+//	other data related to click if applicable...
+//]
 function findClick(input)
 {
 	//detect if the graph was hit
@@ -194,6 +197,7 @@ function findClick(input)
 	}
 }
 
+//===Event listeners===
 function clickDown(e)
 {
 	var mouse = getMouse(e);

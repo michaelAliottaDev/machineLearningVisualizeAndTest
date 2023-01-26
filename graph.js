@@ -14,6 +14,7 @@ var featureCount;
 //[1] = Feature (m) weight
 var model;
 
+//initializes values of the graph
 function graphInit()
 {
 	graphPoints = [];
@@ -22,6 +23,7 @@ function graphInit()
 	featureCount = 1;
 }
 
+//adds a point to the graph data
 function placeGraphPoint(x, y)
 {
 	graphPoints[graphPointsLen] = [];
@@ -30,9 +32,9 @@ function placeGraphPoint(x, y)
 	graphPointsLen++;
 }
 
+//resets graph data
 function clearGraph()
 {
-	graphPoints = [];
-	graphPointsLen = 0;
+	graphInit();
 	drawAllPointsOnGraph();
 }

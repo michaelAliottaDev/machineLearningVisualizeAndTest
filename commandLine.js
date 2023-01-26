@@ -5,12 +5,14 @@
 var lineRecord;
 var lineRecordLen;
 
+//initializes commandLineData
 function commandLineInit()
 {
 	lineRecord = [];
 	lineRecordLen = 0;
 }
 
+//reads in the command in the command line and does as it says if there is an instruction that matches it
 function doCommand(command)
 {
 	var response = [
@@ -19,6 +21,7 @@ function doCommand(command)
 	
 	if (command == "help")
 	{
+		//output help
 		response[1] = ["help:", "Show a list of commands and what they do"];
 		response[2] = ["save:", "Save an xml file of the graph to your local drive"];
 		response[3] = ["load:", "Load an xml file of a graph from your local drive and set the current graph to that"];
@@ -92,6 +95,7 @@ function doCommand(command)
 	}
 }
 
+//refines response a bit and then outputs it
 function addResponse(response)
 {
 	var responseOffset = response.length + 1;

@@ -1,8 +1,10 @@
 "use strict"
 
 //===FORMATTING VALUES===
+//default margin for all elements
 var margin;
 
+//colors of graph elements
 var graphBorderCol;
 var graphCol;
 var graphLineCol;
@@ -11,6 +13,12 @@ var graphTextCol;
 var graphTriCol;
 var graphPointsCol;
 
+//colors of axis bars on graph
+var graphAxisBarCol;
+var buttonBorder;
+var buttonSize;
+
+//size of graph elements
 var graphBorder;
 var graphSize;
 var graphLineWidth;
@@ -18,24 +26,19 @@ var graphLineLength;
 var graphInnerMargin;
 var graphLocReportTextSize;
 var graphTextSize;
-
-var graphAxisBarCol;
 var graphAxisBarWidth;
 var graphAxisBarInnerWidth;
-
 var graphPointRad;
 
+//feature on each axis (label if 0)
 var graphXAxis;
 var graphYAxis;
 
-var buttonBorder;
-var buttonCol;
-var buttonBorderCol;
-var buttonSize;
-
+//size of command line elements
 var commandLineRecordTextSize;
 var commandLineRecordTab;
 
+//set display values and draw display elements
 function displayInit()
 {
 	margin = 5.0;
@@ -47,9 +50,6 @@ function displayInit()
 	graphTextCol = "#000000"
 	graphTriCol = "#000000"
 	graphPointsCol = "#4ca6ff";
-	
-	buttonCol = "#ffffff";
-	buttonBorderCol = "#dbdbdb";
 	
 	graphBorder = 2.0;
 	graphInnerMargin = 5.0;
@@ -76,13 +76,13 @@ function displayInit()
 	
 	drawGraph();
 	drawGraphAxisBar();
-	//drawLinearModel([0.0, 1.0, 1.0]);
 	
 	document.querySelector('#inputText').style.left = (margin * 2) + "px";
 	document.querySelector('#inputText').style.top = (margin * 4 + (graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth) + "px";
 	document.querySelector('#inputText').style.width = (graphSize + (graphInnerMargin) * 2 + graphAxisBarWidth) + "px";
 }
-	
+
+//draws the graph (but not points on the graph)	
 function drawGraph()
 {
 	ctx.fillStyle = graphBorderCol;
@@ -150,6 +150,7 @@ function drawGraph()
 	);
 }
 
+//draws the axis bars on the side of the graph
 function drawGraphAxisBar()
 {
 	//X Axis Buttons
@@ -294,6 +295,48 @@ function drawGraphAxisBar()
 	ctx.restore()
 }
 
+//draws all points on the graph
+function drawAllPointsOnGraph()
+{
+	pointsCtx.clearRect(0, 0, pointsCanvas.width, pointsCanvas.height);
+	
+	for (var i = 0; i < graphPointsLen; i++)
+	{
+		drawPointOnGraph(i);
+	}
+}
+
+//draws only the point at the index
+function drawPointOnGraph(index)
+{
+	if (
+		graphPoints[index][graphXAxis] == undefined ||
+		graphPoints[index][graphYAxis] == undefined
+	)
+	{
+		
+	}
+	else
+	{
+		var tempPoint = graphPointToDisplayPoint(
+			graphPoints[index][graphXAxis], 
+			graphPoints[index][graphYAxis]
+		);
+		
+		pointsCtx.beginPath();
+		pointsCtx.fillStyle = graphPointsCol;
+		pointsCtx.arc(
+			tempPoint[0],
+			tempPoint[1],
+			graphPointRad, 
+			0, 2 * Math.PI
+		);
+		pointsCtx.fill();
+	}
+}
+
+//shows the x, y coordinate of the mouse the graph while mouse is over the graph
+//otherwise clear the section which would show that info
 function graphLocReport(x, y)
 {
 	ctx.clearRect(
@@ -322,286 +365,6 @@ function graphLocReport(x, y)
 		margin, 
 		graphLocReportTextSize + (margin + graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
 	);
-}
-
-function drawLinearModel(model)
-{
-	// +--0--+
-	// |  |  |
-	// 3--+--1
-	// |  |  |
-	// +--2--+
-	var boarderPoints = [
-		//grey line
-		(0 - model[0] + model[2]) / model[1], //value of f0 when f1 = -1 and label = 0
-		(0 - model[0] - model[2]) / model[1], //value of f0 when f1 = 1  and label = 0
-		(0 - model[0] + model[1]) / model[2], //value of f1 when f0 = -1 and label = 0
-		(0 - model[0] - model[1]) / model[2], //value of f1 when f0 = 1  and label = 0
-		//orange line
-		(-1 - model[0] - model[2]) / model[1], //value of f0 when f1 = 1  and label = -1
-		(-1 - model[0] - model[1]) / model[2], //value of f1 when f0 = 1  and label = -1
-		(-1 - model[0] + model[2]) / model[1], //value of f0 when f1 = -1 and label = -1
-		(-1 - model[0] + model[1]) / model[2], //value of f1 when f0 = -1 and label = -1
-		//blue line
-		(1 - model[0] - model[2]) / model[1], //value of f0 when f1 = 1  and label = 1
-		(1 - model[0] - model[1]) / model[2], //value of f1 when f0 = 1  and label = 1
-		(1 - model[0] + model[2]) / model[1], //value of f0 when f1 = -1 and label = 1
-		(1 - model[0] + model[1]) / model[2]  //value of f1 when f0 = -1 and label = 1
-	];
-	
-	//getting the label value for each corner
-	// 3 | 0
-	// --+--
-	// 2 | 1
-	var cornerPoints = [
-		model[0] + model[1] + model[2],
-		model[0] + model[1] - model[2],
-		model[0] - model[1] - model[2],
-		model[0] - model[1] + model[2]
-	];
-	
-	var progress = 0;
-	var displayPoints = [];
-	var cornerCirc = [];
-	var memorize = [
-		graphPointToDisplayPoint(1.0, 1.0),
-		graphPointToDisplayPoint(1.0, -1.0),
-		graphPointToDisplayPoint(-1.0, -1.0),
-		graphPointToDisplayPoint(-1.0, 1.0)
-	];
-	var temp = [];
-	
-	for (var i = 0; i < 4 && progress < 2; i++)
-	{
-		if (boarderPoints[i] >= -1 && boarderPoints[i] <= 1)
-		{
-			if (i < 2)
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(boarderPoints[i], (i * 2) - 1);
-			}
-			else 
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(((i - 2) * 2) - 1, boarderPoints[i]);
-			}
-			
-			progress++;
-		}
-	}
-	
-	modelCtx.beginPath();
-	modelCtx.strokeStyle = "#000000";
-	modelCtx.moveTo(displayPoints[0][0], displayPoints[0][1]);
-	modelCtx.lineTo(displayPoints[1][0], displayPoints[1][1]);
-	modelCtx.stroke();
-	
-	modelCtx.strokeStyle = labelSwatches[0];
-	modelCtx.fillStyle = labelSwatches[0];
-	progress = 0;
-	
-	for (var i = 0; i < 4 && progress < 2; i++)
-	{
-		if (boarderPoints[i + 4] >= -1 && boarderPoints[i + 4] <= 1)
-		{
-			if (i % 2 == 0)
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(boarderPoints[4 + i], 1.0 - i);
-			}
-			else
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(2.0 - i, boarderPoints[4 + i]);
-			}
-			
-			cornerCirc[progress] = i;
-			progress++;
-		}
-	}
-	
-	if (progress >= 2)
-	{
-		modelCtx.beginPath();
-		modelCtx.moveTo(displayPoints[0][0], displayPoints[0][1]);
-		modelCtx.lineTo(displayPoints[1][0], displayPoints[1][1]);
-		modelCtx.stroke();
-	}
-	
-	modelCtx.beginPath();
-	modelCtx.moveTo(displayPoints[0][0], displayPoints[0][1]);
-	modelCtx.lineTo(displayPoints[1][0], displayPoints[1][1]);
-	
-	console.log(cornerPoints, cornerCirc);
-	
-	progress = -1;
-
-	for(var i = 0; i < 4 || progress >= 0; i++)
-	{
-		for(var j = 0; j < 2; j++)
-		{
-			if (cornerCirc[j] == i % 4)
-			{
-				if (progress == -1)
-				{
-					progress = j;
-					modelCtx.moveTo(displayPoints[j][0], displayPoints[j][1]);
-				}
-				else
-				{
-					modelCtx.lineTo(displayPoints[j][0], displayPoints[j][1]);
-					if (progress == j)
-					{
-						progress = -2;
-					}
-				}
-			}
-		}
-		
-		if (cornerPoints[i % 4] <= -1.0)
-		{
-			if (progress == -1)
-			{
-				progress = 2 + (i % 4);
-				modelCtx.moveTo(memorize[i % 4][0], memorize[i % 4][1]);
-			}
-			else
-			{
-				modelCtx.lineTo(memorize[i % 4][0], memorize[i % 4][1]);
-				if (progress == 2 + (i % 4))
-				{
-					progress = -2;
-				}
-			}
-		}
-	}
-	
-	if (progress != -1)
-	{
-		modelCtx.globalAlpha = 0.5;
-		modelCtx.fill();
-		modelCtx.globalAlpha = 1.0;
-	}
-	
-	modelCtx.strokeStyle = labelSwatches[1];
-	modelCtx.fillStyle = labelSwatches[1];
-	progress = 0;
-	
-	for (var i = 0; i < 4 && progress < 2; i++)
-	{
-		if (boarderPoints[i + 8] >= -1 && boarderPoints[i + 8] <= 1)
-		{
-			if (i % 2 == 0)
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(boarderPoints[8 + i], 1.0 - i);
-			}
-			else
-			{
-				displayPoints[progress] = graphPointToDisplayPoint(2.0 - i, boarderPoints[8 + i]);
-			}
-			
-			cornerCirc[progress] = i;
-			progress++;
-		}
-	}
-	
-	
-	if (progress >= 2)
-	{
-		modelCtx.beginPath();
-		modelCtx.moveTo(displayPoints[0][0], displayPoints[0][1]);
-		modelCtx.lineTo(displayPoints[1][0], displayPoints[1][1]);
-		modelCtx.stroke();
-	}
-	
-	modelCtx.beginPath();
-	modelCtx.moveTo(displayPoints[0][0], displayPoints[0][1]);
-	modelCtx.lineTo(displayPoints[1][0], displayPoints[1][1]);
-	
-	console.log(cornerPoints, cornerCirc);
-	
-	progress = -1;
-
-	for(var i = 0; i < 4 || progress >= 0; i++)
-	{
-		for(var j = 0; j < 2; j++)
-		{
-			if (cornerCirc[j] == i % 4)
-			{
-				if (progress == -1)
-				{
-					progress = j;
-					modelCtx.moveTo(displayPoints[j][0], displayPoints[j][1]);
-				}
-				else
-				{
-					modelCtx.lineTo(displayPoints[j][0], displayPoints[j][1]);
-					if (progress == j)
-					{
-						progress = -2;
-					}
-				}
-			}
-		}
-		
-		if (cornerPoints[i % 4] >= 1.0)
-		{
-			if (progress == -1)
-			{
-				progress = 2 + (i % 4);
-				modelCtx.moveTo(memorize[i % 4][0], memorize[i % 4][1]);
-			}
-			else
-			{
-				modelCtx.lineTo(memorize[i % 4][0], memorize[i % 4][1]);
-				if (progress == 2 + (i % 4))
-				{
-					progress = -2;
-				}
-			}
-		}
-	}
-	
-	if (progress != -1)
-	{
-		modelCtx.globalAlpha = 0.5;
-		modelCtx.fill();
-		modelCtx.globalAlpha = 1.0;
-	}
-}
-
-function drawAllPointsOnGraph()
-{
-	pointsCtx.clearRect(0, 0, pointsCanvas.width, pointsCanvas.height);
-	
-	for (var i = 0; i < graphPointsLen; i++)
-	{
-		drawPointOnGraph(i);
-	}
-}
-
-function drawPointOnGraph(index)
-{
-	if (
-		graphPoints[index][graphXAxis] == undefined ||
-		graphPoints[index][graphYAxis] == undefined
-	)
-	{
-		
-	}
-	else
-	{
-		var tempPoint = graphPointToDisplayPoint(
-			graphPoints[index][graphXAxis], 
-			graphPoints[index][graphYAxis]
-		);
-		
-		pointsCtx.beginPath();
-		pointsCtx.fillStyle = graphPointsCol;
-		pointsCtx.arc(
-			tempPoint[0],
-			tempPoint[1],
-			graphPointRad, 
-			0, 2 * Math.PI
-		);
-		pointsCtx.fill();
-	}
 }
 
 //console output
@@ -634,6 +397,7 @@ function printRecord()
 	}
 }
 
+//converts a x, y on the graph to a x, y in pixels on the browser screen
 function graphPointToDisplayPoint(x, y)
 {
 	return [
@@ -642,6 +406,7 @@ function graphPointToDisplayPoint(x, y)
 	];
 }
 
+//converts a x, y in pixels on the browser screen to a x, y on the graph
 function displayPointToGraphPoint(x, y)
 {
 	return [ 
@@ -650,7 +415,7 @@ function displayPointToGraphPoint(x, y)
 	];
 }
 
-//Quality of Life "helper" functions
+//===helper functions===
 function fillRect(ACtx, x, y, w, h)
 {
 	ACtx.beginPath();

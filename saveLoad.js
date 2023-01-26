@@ -4,7 +4,8 @@ window.URL = window.URL || window.webkitURL;
 var fileElem;
 var reader;
 var parser;
-	
+
+//initializing the saving functionality
 function saveLoadInit()
 {
     fileElem = document.getElementById("fileElem");
@@ -17,14 +18,7 @@ function saveLoadInit()
 	};
 }
 
-function openLoadFile()
-{
-	if (fileElem)
-	{
-		fileElem.click();
-	}
-}
-
+//sets content of xml file and saves it
 function saveFile()
 {
 	var tempText = '<base>\n';
@@ -87,6 +81,7 @@ function saveFile()
 	addResponse([["Graph Saved to File"]]);
 }
 
+//sets current data to that of a loaded xml file
 function loadFile(file)
 {
 	var dataHold = file.getElementsByTagName("point");;
@@ -112,8 +107,19 @@ function loadFile(file)
 		}
 	}
 	
+	drawGraph();
+	drawGraphAxisBar();
 	drawAllPointsOnGraph();
 	addResponse([["Graph Loaded to Display"]]);
+}
+
+//===helper functions===
+function openLoadFile()
+{
+	if (fileElem)
+	{
+		fileElem.click();
+	}
 }
 
 function handleFiles(files) 
