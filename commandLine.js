@@ -299,7 +299,6 @@ function parseCommand(command)
 	
 	while (str.length > 0)
 	{
-		console.log(str, str.length);
 		if (str.substring(0, 1) == " ")
 		{
 			str = str.substring(1);
@@ -322,7 +321,6 @@ function parseCommand(command)
 		}
 	}
 	
-	console.log(res);
 	return res;
 }
 
