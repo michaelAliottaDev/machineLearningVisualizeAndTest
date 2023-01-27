@@ -6,6 +6,9 @@ var lineRecord;
 var lineRecordLen;
 
 var priCommands;
+var priCommandAknowlg;
+var expectedArguements;
+var expArgTitle;
 
 //initializes commandLineData
 function commandLineInit()
@@ -22,11 +25,27 @@ function commandLineInit()
 	];
 	
 	priCommandAknowlg = [
+		["Read command: Help", ""],
+		["Read command: Save", ""],
+		["Read command: Load", ""],
+		["Read command: Show", ""],
+		["Read command: Clear", ""]
+	];
+	
+	expectedArguements = [
 		[],
-		["Downloading Graph File..."],
-		["Loading From File..."],
 		[],
-		[]
+		[],
+		["s=#", "p", "a"],
+		["g", "c", "a"]
+	];
+	
+	expArgTitle = [
+		[],
+		[],
+		[],
+		["Start At", "Target Points", "Target All"],
+		["Graph", "Console", "All"]
 	];
 }
 
@@ -36,34 +55,127 @@ function doCommand(command)
 	var response = [
 		["Command: \"" + command + "\""]
 	];
+	var respLength = 1;
+	var didReq = false;
+	var yesReq = [];
+	var yesReqLength = 0;
+	var noReq = [];
+	var noReqLength = 0;
+	var tars = [];
+	var tarsLength = 0;
+	var specArgOfs = 0;
 	
+	//calls another function to parse the command from raw text
 	var commandAsArray = parseCommand(command);
 	
+	//attempt to parse the command ran an error code
 	if (commandAsArray[0] == "Error Code")
 	{
 		for (var i = 1; i < commandAsArray.length; i++)
 		{
 			response[i] = [commandAsArray[i]];
 		}
+		
+		addResponse(response);
+		return;
 	}
-	else if (commandAsArray[0] == "help")
+	
+	//reads in arguements
+	for (var i = 0; i < priCommands.length; i++)
 	{
-		response[1] = ["help:", "Show a list of commands and what they do"];
-		response[2] = ["save:", "Save an xml file of the graph to your local drive"];
-		response[3] = ["load:", "Load an xml file of a graph from your local drive and set the current graph to that"];
-		response[4] = ["show data:", "Output the number of features, number of points on the graph and value of each point to the console"];
-		response[5] = ["clear:", "Clear the graph and the console"];
+		if (commandAsArray[0] == priCommands[i])
+		{
+			//sets response to the acknowledgement statement for the command
+			response[respLength] = priCommandAknowlg[i];
+			respLength++;
+			
+			//read arguments and checking if they are expected for that command
+			for (var j = 0; j < commandAsArray[1].length; j++)
+			{
+				didReq = false;
+				
+				for (var k = 0; k < expectedArguements[i].length && !didReq; k++)
+				{
+					if (commandAsArray[1][j] == expectedArguements[i][k])
+					{
+						didReq = true;
+					}
+					else if (expectedArguements[i][k].substring(-1) == "#")
+					{
+						didReq = true;
+						
+						for (var l = 0; expectedArguements[i][k].substring(l) != "#" && didReq; l++)
+						{
+							if(
+								commandAsArray[1][j].substring(l + 1) != 
+								expectedArguements[i][k].substring(l, l + 1)
+							){
+								didReq = false;
+							}
+						}
+					}
+				}
+				
+				if (!didReq)
+				{
+					noReq[noReqLength] = commandAsArray[1][j];
+					noReqLength++;
+				}
+				else
+				{
+					yesReq[yesReqLength] = commandAsArray[1][j];
+					yesReqLength++;
+					
+					response[respLength - 1][yesReqLength + 1] = expArgTitle[i][k - 1];
+				}
+			}
+			
+			i = priCommands.length;
+		}
 	}
-	else if (commandAsArray[0] == "save")
+	
+	//listing unrecognized arguments
+	for (var i = 0; i < noReqLength; i++)
 	{
-		response[1] = ["Downloading Graph File..."];
+		response[respLength] = ["Did not recognize argument: \"-" + noReq[i] + "\", (ignoring)"];
+		respLength++;
 	}
-	else if (commandAsArray[0] == "load")
+	
+	//Outputing acknowledgement
+	addResponse(response);
+	
+	response = [];
+	respLength = 0;
+	
+	//runs code specific to commands
+	
+	if (commandAsArray[0] == "help")
 	{
-		response[1] = ["Loading From File..."];
+		//help output
+		response[respLength] = ["help:", "Show a list of commands and what they do"];
+		response[respLength + 1] = ["save:", "Save an xml file of the graph to your local drive"];
+		response[respLength + 2] = ["load:", "Load an xml file of a graph set the current graph to it"];
+		response[respLength + 3] = ["show:", "Output info to the console about something, does nothing without an argument"];
+		response[respLength + 4] = ["clear:", "Clear the graph and the console"];
+
+		addResponse(response);
+		response += 5;
 	}
 	else if (commandAsArray[0] == "show")
 	{
+		for (var i = 0; i < yesReqLength; i++)
+		{
+			if (yesReq[j] == " -p" || yesReq[j] == " -a")
+			{
+				tars[tarsLength] = ["p"];
+			}
+			
+			if (yesReq[j].substring(0, 4) == " -n=" || yesReq[j] == " -a")
+			{
+				console.log(yesReq[j].substring(4) - 0.0);
+			}
+		}
+		
 /*		if (command.substring(4, 7) == " -p")
 		{
 			if (command.substring(7, 11) == " -n ")
@@ -122,61 +234,46 @@ function doCommand(command)
 			response[1] = ["use of \"show\" command not recognized"];
 		}*/
 	}
-	else if (commandAsArray[0] == "clear")
-	{
-		if (command.substring(5, 8) == " -g")
-		{
-			response[1] = ["Clearing Graph"];
-		}
-		else if (command.substring(5, 8) == " -c")
-		{
-			//no response
-		}
-		else if (command.substring(5) == "" || command.substring(5, 8) == " -a")
-		{
-			//no response
-		}
-		else 
-		{
-			response[1] = ["use of \"clear\" command not recognized"];
-		}
-	}
-	
-	addResponse(response);
-	
-	if (command == "save")
+	else if (commandAsArray[0] == "save")
 	{
 		saveFile();
 	}
-	else if (command == "load")
+	else if (commandAsArray[0] == "load")
 	{
 		openLoadFile();
 	}
-	else if (command.substring(0, 5) == "clear")
+	else if (commandAsArray[0] == "clear")
 	{
-		if (command.substring(5, 8) == " -g")
+		for (var i = 0; i < yesReqLength; i++)
+		{
+			if (yesReq[i] == "g" || yesReq[i] == "a")
+			{
+				clearGraph();
+			}
+			
+			if (yesReq[i] == "c" || yesReq[i] == "a")
+			{
+				lineRecord = [];
+				lineRecordLen = 0;
+				
+				printRecord();
+			}
+		}
+		
+		if (yesReqLength == 0)
 		{
 			clearGraph();
-		}
-		else if (command.substring(5, 8) == " -c")
-		{
+			
 			lineRecord = [];
 			lineRecordLen = 0;
 			
 			printRecord();
-		}
-		else if (command.substring(5) == "" || command.substring(5, 8) == " -a")
-		{
-			lineRecord = [];
-			lineRecordLen = 0;
-			
-			printRecord();
-			clearGraph();
 		}
 	}
 }
 
 //[0] = name of primary command
+//[1] = list of arguments
 function parseCommand(command)
 {
 	var res = ["", []];
@@ -209,12 +306,14 @@ function parseCommand(command)
 		}
 		else if (str.substring(0, 1) == "-")
 		{
-			/*if (str.substring(1, 2) == "-")
+			res[1][res[1].length] = "";
+			str = str.substring(1);
+			
+			while (str != "" && str.substring(0, 1) != " ")
 			{
-				//save for later
-			}*/
-			res[1][res[1].length] = str.substring(1, 2);
-			str = str.substring(2);
+				res[1][res[1].length - 1] += str.substring(0, 1);
+				str = str.substring(1);
+			}
 		}
 		else
 		{
