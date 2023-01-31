@@ -9,6 +9,7 @@ var priCommands;
 var priCommandAknowlg;
 var expectedArguements;
 var expArgTitle;
+var expArgTitleVar;
 
 //initializes commandLineData
 function commandLineInit()
@@ -36,7 +37,7 @@ function commandLineInit()
 		[],
 		[],
 		[],
-		["s=#", "p", "a"],
+		["s=#", "p"],
 		["g", "c", "a"]
 	];
 	
@@ -44,8 +45,16 @@ function commandLineInit()
 		[],
 		[],
 		[],
-		["Start At", "Target Points", "Target All"],
+		["Start At: ", "Points", "All"],
 		["Graph", "Console", "All"]
+	];
+	
+	expArgTitleVar = [
+		[],
+		[],
+		[],
+		[true,	false,	false],
+		[false, false,	false]
 	];
 }
 
@@ -61,9 +70,7 @@ function doCommand(command)
 	var yesReqLength = 0;
 	var noReq = [];
 	var noReqLength = 0;
-	var tars = [];
-	var tarsLength = 0;
-	var specArgOfs = 0;
+	var argVar = undefined;
 	
 	//calls another function to parse the command from raw text
 	var commandAsArray = parseCommand(command);
@@ -100,18 +107,23 @@ function doCommand(command)
 					{
 						didReq = true;
 					}
-					else if (expectedArguements[i][k].substring(-1) == "#")
+					else if (expectedArguements[i][k].substring(expectedArguements[i][k].length - 1, expectedArguements[i][k].length) == "#")
 					{
 						didReq = true;
 						
 						for (var l = 0; expectedArguements[i][k].substring(l) != "#" && didReq; l++)
 						{
 							if(
-								commandAsArray[1][j].substring(l + 1) != 
+								commandAsArray[1][j].substring(l, l + 1) != 
 								expectedArguements[i][k].substring(l, l + 1)
 							){
 								didReq = false;
 							}
+						}
+						
+						if (didReq)
+						{
+							argVar = commandAsArray[1][j].substring(l, commandAsArray[1][j].length);
 						}
 					}
 				}
@@ -123,10 +135,20 @@ function doCommand(command)
 				}
 				else
 				{
-					yesReq[yesReqLength] = commandAsArray[1][j];
+					yesReq[yesReqLength] = [expectedArguements[i][k - 1]];
 					yesReqLength++;
 					
 					response[respLength - 1][yesReqLength + 1] = expArgTitle[i][k - 1];
+					
+					if (argVar !== undefined)
+					{
+						yesReq[yesReqLength - 1][1] = argVar;
+						
+						if (expArgTitleVar[i][k - 1])
+						{
+							response[respLength - 1][yesReqLength + 1] += argVar;
+						}
+					}
 				}
 			}
 			
@@ -163,76 +185,7 @@ function doCommand(command)
 	}
 	else if (commandAsArray[0] == "show")
 	{
-		for (var i = 0; i < yesReqLength; i++)
-		{
-			if (yesReq[j] == " -p" || yesReq[j] == " -a")
-			{
-				tars[tarsLength] = ["p"];
-			}
-			
-			if (yesReq[j].substring(0, 4) == " -n=" || yesReq[j] == " -a")
-			{
-				console.log(yesReq[j].substring(4) - 0.0);
-			}
-		}
-		
-/*		if (command.substring(4, 7) == " -p")
-		{
-			if (command.substring(7, 11) == " -n ")
-			{
-				temp = command.substring(11) - 0;
-				console.log(temp)
-				response[1] = ["Features: " + featureCount];
-				response[2] = ["Points: " + graphPointsLen];
-				
-				for (var i = 0; i + temp < graphPoints.length && i < 20; i++)
-				{
-					response[3 + i] = ["Point[" + (i + temp) + "]:"];
-					
-					for (var j = 0; j < graphPoints[i + temp].length; j++)
-					{
-						if (graphPoints[i][j] !== undefined)
-						{
-							response[3 + i][1 + j] = graphPoints[i + temp][j] + "";
-						}
-						else
-						{
-							response[3 + i][1 + j] = "--";
-						}
-					}
-				}
-			}
-			else if (command.substring(8) == "")
-			{
-				response[1] = ["Features: " + featureCount];
-				response[2] = ["Points: " + graphPointsLen];
-				
-				for (var i = 0; i < graphPoints.length && i < 20; i++)
-				{
-					response[3 + i] = ["Point[" + i + "]:"];
-					
-					for (var j = 0; j < graphPoints[i].length; j++)
-					{
-						if (graphPoints[i][j] !== undefined)
-						{
-							response[3 + i][1 + j] = graphPoints[i][j] + "";
-						}
-						else
-						{
-							response[3 + i][1 + j] = "--";
-						}
-					}
-				}
-			}
-			else 
-			{
-				response[1] = ["use of \"show\" command not recognized"];
-			}
-		}
-		else 
-		{
-			response[1] = ["use of \"show\" command not recognized"];
-		}*/
+		show (yesReq, yesReqLength)
 	}
 	else if (commandAsArray[0] == "save")
 	{
@@ -322,6 +275,68 @@ function parseCommand(command)
 	}
 	
 	return res;
+}
+
+function show(args, argsLen)
+{
+	var tar = [];
+	var tarSet = false;
+	var startAt = 0;
+	var response = [];
+	
+	for (var i = 0; i < argsLen; i++)
+	{
+		if (!tarSet)
+		{
+			if (args[i][0] == "p")
+			{
+				tar = "p";
+				tarSet = true;
+			}
+		}
+		
+		if (args[i][0] == "s=#")
+		{
+			startAt = args[i][1] - 0;
+		}
+	}
+	
+	if (!tarSet)
+	{
+		addResponse(["Nothing Selected (try an argument)"]);
+		return;
+	}
+	
+	switch (tar)
+	{
+		case "p":
+			response[0] = ["Features: " + featureCount];
+			response[1] = ["Points: " + graphPointsLen];
+			
+			for (var i = 0; i < 18 && i + startAt < graphPointsLen; i++)
+			{
+				response[2 + i] = ["Point[" + (i + startAt) + "]:"];
+				
+				for (var j = 0; j < graphPoints[i + startAt].length; j++)
+				{
+					if (graphPoints[i][j] !== undefined)
+					{
+						response[2 + i][1 + j] = graphPoints[i + startAt][j] + "";
+					}
+					else
+					{
+							response[2 + i][1 + j] = "--";
+					}
+				}
+				
+			}
+			
+			addResponse(response);
+			break;
+		default:
+			addResponse(["Invalid Data Selection"]);
+			break;
+	}
 }
 
 //refines response a bit and then outputs it
