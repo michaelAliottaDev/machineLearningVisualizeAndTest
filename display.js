@@ -30,6 +30,19 @@ var graphAxisBarWidth;
 var graphAxisBarInnerWidth;
 var graphPointRad;
 
+//size of secondary display elements
+var secDispBorder;
+var secDispSize;
+var secDispTextSize;
+var secDispCellHeight;
+var secDispCellWidth;
+var secDispCellInnerMargin;
+var secDispCellDivWidth;
+var secDispInnerMargin;
+var secDispSelAxisX;
+var secDispSelAxisY;
+var secDispTitleHeight;
+
 //feature on each axis (label if 0)
 var graphXAxis;
 var graphYAxis;
@@ -58,7 +71,6 @@ function displayInit()
 	graphLineLength = 0.95;
 	graphLocReportTextSize = 14;
 	graphTextSize = 14;
-	
 	graphPointRad = 2.5;
 	
 	graphXAxis = 1;
@@ -67,6 +79,18 @@ function displayInit()
 	graphAxisBarCol = "#ffffff";
 	graphAxisBarInnerWidth = 20.0;
 	graphAxisBarWidth = graphAxisBarInnerWidth + (graphBorder * 1.0);
+	
+	secDispBorder = 2.0;
+	secDispSize = 512.0;
+	secDispTextSize = 14;
+	secDispCellHeight = 20;
+	secDispCellWidth = 90;
+	secDispCellInnerMargin = 2.0;
+	secDispCellDivWidth = 4.0;
+	secDispInnerMargin = 5.0;
+	secDispSelAxisX = 0;
+	secDispSelAxisY = 0;
+	secDispTitleHeight = 20.0;
 	
 	buttonBorder = 2.0;
 	buttonSize = 32.0;
@@ -77,9 +101,103 @@ function displayInit()
 	drawGraph();
 	drawGraphAxisBar();
 	
+	drawSecDisp();
+	
 	document.querySelector('#inputText').style.left = (margin * 2) + "px";
 	document.querySelector('#inputText').style.top = (margin * 4 + (graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth) + "px";
-	document.querySelector('#inputText').style.width = (graphSize + (graphInnerMargin) * 2 + graphAxisBarWidth) + "px";
+	document.querySelector('#inputText').style.width = (graphSize + graphInnerMargin * 2 + graphAxisBarWidth) + "px";
+}
+
+function drawSecDisp()
+{
+	ctx.fillStyle = graphBorderCol;
+	fillRect(
+		ctx, 
+		margin * 2 + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
+		margin, 
+		secDispBorder * 2 + secDispInnerMargin * 2 + secDispSize,
+		secDispBorder * 2 + secDispInnerMargin * 2 + secDispSize + secDispTitleHeight
+	);
+	
+	ctx.fillStyle = graphCol;
+	fillRect(
+		ctx, 
+		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
+		margin + secDispBorder, 
+		secDispInnerMargin * 2 + secDispSize,
+		secDispInnerMargin * 2 + secDispSize
+	);
+	
+	ctx.fillStyle = graphLineCol
+	
+	for (var i = 1; i < featureCount + 3; i++)
+	{
+		ctx.beginPath();
+		ctx.fillRect(
+			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (i * 2) + secDispCellInnerMargin * (i * 2) + secDispCellWidth * i + secDispCellDivWidth * (i - 1),
+			margin + secDispBorder + secDispInnerMargin,
+			secDispCellDivWidth,
+			secDispSize - secDispInnerMargin
+		);
+	}
+	
+	ctx.fillStyle = graphTextCol;
+	ctx.textAlign = "center";
+	
+	ctx.beginPath();
+	ctx.fillText(
+		"Index",
+		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
+		margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+	);
+	
+	ctx.fillStyle = graphBorderCol;
+	for (var j = 0; j < graphPointsLen; j++)
+	{
+		ctx.beginPath();
+		ctx.fillText(
+			j,
+			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
+			margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
+		);
+	}
+	
+	ctx.beginPath();
+	ctx.fillText(
+		"Label",
+		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
+		margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+	);
+		
+	for (var j = 0; j < graphPointsLen; j++)
+	{
+		ctx.beginPath();
+		ctx.fillText(
+			graphPoints[0][j],
+			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
+			margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
+		);
+	}
+	
+	for (var i = 0; i < featureCount; i++)
+	{
+		ctx.beginPath();
+		ctx.fillText(
+			"Feature " + (1 + i),
+			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (5 + (i * 2)) + secDispCellInnerMargin * (5 + (i * 2)) + secDispCellWidth * (2.5 + i) + secDispCellDivWidth * 2,
+			margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+		);
+		
+		for (var j = 0; j < graphPointsLen; j++)
+		{
+			ctx.beginPath();
+			ctx.fillText(
+				graphPoints[i + 1][j],
+				margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (5 + (i * 2)) + secDispCellInnerMargin * (5 + (i * 2)) + secDispCellWidth * (2.5 + i) + secDispCellDivWidth * 2,
+				margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
+			);
+		}
+	}
 }
 
 //draws the graph (but not points on the graph)	
