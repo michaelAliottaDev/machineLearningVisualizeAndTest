@@ -17,10 +17,10 @@ var model;
 //initializes values of the graph
 function graphInit()
 {
-	graphPoints = [[0, 1.0, 1.0, 1.0]];
+	graphPoints = [[0, 1.0, 0.5, 0.0, -0.5, -1.0]];
 	graphPointsLen = 1;
 	
-	featureCount = 3;
+	featureCount = 5;
 }
 
 //adds a point to the graph data

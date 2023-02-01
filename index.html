@@ -10,8 +10,8 @@
 			background: #f9feff;
 		}
 		canvas {
-			display: block; 
-			margin: 5px; 
+			position: absolute;
+			display: block;
 		}
 		canvas, img {
 			image-rendering: optimizeSpeed;
@@ -44,6 +44,11 @@
 			overflow-wrap: normal;
 			overflow-x: scroll;			
 		}
+		#displayContainer
+		{
+			display: block; 
+			margin: 5px; 
+		}
 	</style>
 	<script src='input.js'></script>
 	<script src='graph.js'></script>
@@ -54,7 +59,7 @@
 	<script src='loader.js'></script>
 </head>
 <body>
-	<div>
+	<div id="displayContainer">
 		<canvas id="baseCanvas" width="0" height="0">
 		</canvas>
 		<canvas id="graphPointsCanvas" width="0" height="0">
@@ -62,10 +67,12 @@
 		<canvas id="graphModelCanvas" width="0" height="0">
 		</canvas>
 	</div>
-	<input type="file" id="fileElem" accept='text/xml' style="display:none" onchange="handleFiles(this.files)">
-	<form name="myform" action="javascript:void(0);" onsubmit="getAction();">
-		<input type="text" id="inputText">
-	</form>
-	<textarea id="commandLineResp" disabled rows="20"></textarea>
+	<div>
+		<input type="file" id="fileElem" accept='text/xml' style="display:none" onchange="handleFiles(this.files)">
+		<form name="myform" action="javascript:void(0);" onsubmit="getAction();">
+			<input type="text" id="inputText">
+		</form>
+		<textarea id="commandLineResp" disabled rows="20"></textarea>
+	</div>
 </body>
 </html>

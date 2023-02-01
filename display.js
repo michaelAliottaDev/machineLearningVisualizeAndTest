@@ -14,6 +14,8 @@ var secDispSelAxisX;
 var secDispSelAxisY;
 var secDispTitleHeight;
 
+var displayContainer;
+
 //set display values and draw display elements
 function displayInit()
 {
@@ -31,6 +33,8 @@ function displayInit()
 	secDispSelAxisX = 0;
 	secDispSelAxisY = 0;
 	secDispTitleHeight = 20.0;
+	
+	displayContainer = document.querySelector('#displayContainer');
 }
 
 function drawSecDisp()
