@@ -10,10 +10,6 @@ var pointsCtx;
 var modelCanvas;
 var modelCtx;
 
-//"background" canvas
-var canvas;
-var ctx;
-
 //colors of graph elements
 var graphBorderCol;
 var graphCol;
@@ -36,6 +32,7 @@ var graphLineLength;
 var graphInnerMargin;
 var graphLocReportTextSize;
 var graphTextSize;
+var graphTextWidth;
 var graphAxisBarWidth;
 var graphAxisBarInnerWidth;
 var graphPointRad;
@@ -71,6 +68,7 @@ function graphDisplayInit()
 	graphLineLength = 0.95;
 	graphLocReportTextSize = 14;
 	graphTextSize = 14;
+	graphTextWidth = 90;
 	graphPointRad = 2.5;
 	
 	graphXAxis = 1;
@@ -353,4 +351,60 @@ function drawPointOnGraph(index)
 		);
 		pointsCtx.fill();
 	}
+}
+
+//shows the x, y coordinate of the mouse the graph while mouse is over the graph
+//otherwise clear the section which would show that info
+function graphLocReport(x, y)
+{
+	ctx.clearRect(
+		0, 
+		(graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth, 
+		(graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2), 
+		(graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth
+	);
+	
+	if (
+		x < graphBorder + graphInnerMargin + graphAxisBarWidth ||
+		y < graphBorder + graphInnerMargin ||
+		x > graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize ||
+		y > graphBorder + graphInnerMargin + graphSize 
+	)
+	{
+		return;
+	}
+	
+	ctx.fillStyle = "#000000";
+	ctx.font= graphLocReportTextSize + "px Arial";
+	ctx.textAlign = "left";
+	
+	ctx.fillText(
+		(((x - graphBorder - graphInnerMargin - graphAxisBarWidth) * 2 / graphSize) - 1),
+		0, 
+		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
+	);
+	
+	ctx.fillText(
+		(((graphSize + graphBorder + graphInnerMargin - y) * 2 / graphSize) - 1),
+		graphTextWidth, 
+		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
+	);
+}
+
+//converts a x, y on the graph to a x, y in pixels on the browser screen
+function graphPointToDisplayPoint(x, y)
+{
+	return [
+		((x + 1) / 2 * graphSize) + graphAxisBarWidth + graphBorder + graphInnerMargin, 
+		((1 - y) / 2 * graphSize) + graphBorder + graphInnerMargin
+	];
+}
+
+//converts a x, y in pixels on the browser screen to a x, y on the graph
+function displayPointToGraphPoint(x, y)
+{
+	return [ 
+		((x - graphAxisBarWidth - graphBorder - graphInnerMargin) * 2 / graphSize) - 1,  
+		1 - ((y - graphBorder - graphInnerMargin) * 2 / graphSize)
+	];
 }
