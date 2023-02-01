@@ -82,15 +82,15 @@ function graphDisplayInit()
 	
 	buttonBorder = 2.0;
 	buttonSize = 32.0;
-	
-	canvas.width	= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
-	canvas.height	= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
-	
-	switchToGraphDisplay();
 }
 
 function switchToGraphDisplay()
 {
+	canvas.width					= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
+	canvas.height					= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
+	commandLineInput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
+	commandLineOutput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
+
 	drawGraph();
 	drawGraphAxisBar();
 	drawAllPointsOnGraph();

@@ -14,10 +14,6 @@ var secDispSelAxisX;
 var secDispSelAxisY;
 var secDispTitleHeight;
 
-//size of command line elements
-var commandLineRecordTextSize;
-var commandLineRecordTab;
-
 //set display values and draw display elements
 function displayInit()
 {
@@ -35,13 +31,6 @@ function displayInit()
 	secDispSelAxisX = 0;
 	secDispSelAxisY = 0;
 	secDispTitleHeight = 20.0;
-	
-	commandLineRecordTextSize = 14;
-	commandLineRecordTab = 90;
-	
-	document.querySelector('#inputText').style.left = "0px";
-	document.querySelector('#inputText').style.top = ((graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth) + "px";
-	document.querySelector('#inputText').style.width = (graphSize + graphInnerMargin * 2 + graphAxisBarWidth) + "px";
 }
 
 function drawSecDisp()
@@ -429,36 +418,6 @@ function graphLocReport(x, y)
 		0, 
 		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
 	);
-}
-
-//console output
-function printRecord()
-{
-	var inputsize = 
-		Number(window.getComputedStyle(document.querySelector('#inputText'), null).getPropertyValue("height").slice(0, -2)) + 
-		Number(window.getComputedStyle(document.querySelector('#inputText'), null).getPropertyValue("padding-top").slice(0, -2)) + 
-		Number(window.getComputedStyle(document.querySelector('#inputText'), null).getPropertyValue("padding-bottom").slice(0, -2)) + 
-		Number(window.getComputedStyle(document.querySelector('#inputText'), null).getPropertyValue("border-top-width").slice(0, -2)) + 
-		Number(window.getComputedStyle(document.querySelector('#inputText'), null).getPropertyValue("border-bottom-width").slice(0, -2))
-	;
-	
-	consoleCtx.clearRect(0, 0, consoleCanvas.width, consoleCanvas.height);	
-	consoleCtx.fillStyle = "#000000";
-	consoleCtx.font = commandLineRecordTextSize + "px Arial";
-	consoleCtx.textAlign = "left";
-	
-	for (var i = 0; i < lineRecordLen; i++)
-	{
-		for (var j = 0; j < lineRecord[i].length; j++)
-		{
-			consoleCtx.fillText(
-				lineRecord[i][j],
-				j * commandLineRecordTab, 
-				(graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + inputsize + graphAxisBarWidth + 
-					(commandLineRecordTextSize * i)
-			);
-		}
-	}
 }
 
 //converts a x, y on the graph to a x, y in pixels on the browser screen

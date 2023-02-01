@@ -38,7 +38,11 @@
 			z-index: 4;
 		}
 		#commandLineResp {
-			cols: 25;
+			font-family: 'Courier New', monospace;
+			resize: none;
+			white-space: pre;
+			overflow-wrap: normal;
+			overflow-x: scroll;			
 		}
 	</style>
 	<script src='input.js'></script>
@@ -62,8 +66,6 @@
 	<form name="myform" action="javascript:void(0);" onsubmit="getAction();">
 		<input type="text" id="inputText">
 	</form>
-	<canvas id="lineRespCanvas" width="0" height="0">
-	</canvas>
-	<textarea id="commandLineResp" disabled></textarea>
+	<textarea id="commandLineResp" disabled rows="20"></textarea>
 </body>
 </html>

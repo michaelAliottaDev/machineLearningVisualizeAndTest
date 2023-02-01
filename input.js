@@ -16,10 +16,6 @@ function inputInit()
 	modelCanvas.onmousedown = clickDown;
 	modelCanvas.onmouseup = clickUp;
 	modelCanvas.onmousemove = mouseMove;
-	
-	lineRespCanvas.onmousedown = clickDown;
-	lineRespCanvas.onmouseup = clickUp;
-	lineRespCanvas.onmousemove = mouseMove;
 }
 
 //adjusts X and Y of the mouse for its offset on the Canvas

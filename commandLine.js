@@ -11,6 +11,9 @@ var expectedArguements;
 var expArgTitle;
 var expArgTitleVar;
 
+var commandLineInput;
+var commandLineOutput;
+
 //initializes commandLineData
 function commandLineInit()
 {
@@ -56,6 +59,12 @@ function commandLineInit()
 		[true,	false,	false],
 		[false, false,	false]
 	];
+	
+	commandLineInput = document.querySelector('#inputText');
+	commandLineOutput = document.querySelector('#commandLineResp');
+	
+	commandLineInput.style.left = "0px";
+	commandLineOutput.style.left = "0px";
 }
 
 //reads in the command in the command line and does as it says if there is an instruction that matches it
@@ -374,4 +383,25 @@ function addResponse(response)
 	lineRecordLen += responseOffset;
 	
 	printRecord();
+}
+
+//console output
+function printRecord()
+{
+	var resp = "";
+	
+	for (var i = 0; i < lineRecordLen; i++)
+	{
+		for (var j = 0; j < lineRecord[i].length; j++)
+		{
+			resp += lineRecord[i][j];
+			resp += "\t";
+		}
+		
+		resp += "\n"
+	}
+	
+	commandLineOutput.innerHTML = resp + commandLineOutput.innerHTML;
+	lineRecord = [];
+	lineRecordLen = 0;
 }
