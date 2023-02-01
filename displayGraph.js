@@ -41,12 +41,9 @@ var graphPointRad;
 var graphXAxis;
 var graphYAxis;
 
-//set display values and draw display elements
+//set display values of the graph
 function graphDisplayInit()
 {
-	canvas = document.querySelector('#baseCanvas');
-	ctx = baseCanvas.getContext('2d');
-	
 	pointsCanvas = document.querySelector('#graphPointsCanvas');
 	pointsCtx = pointsCanvas.getContext('2d');
 	

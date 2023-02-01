@@ -1,44 +1,45 @@
 "use strict"
 
 //===FORMATTING VALUES===
-//size of secondary display elements
-var secDispBorder;
-var secDispSize;
-var secDispTextSize;
-var secDispCellHeight;
-var secDispCellWidth;
-var secDispCellInnerMargin;
-var secDispCellDivWidth;
-var secDispInnerMargin;
-var secDispSelAxisX;
-var secDispSelAxisY;
-var secDispTitleHeight;
-
 //"background" canvas
 var canvas;
 var ctx;
 
 var displayContainer;
 
+var displayMode;
+
 //set display values and draw display elements
 function displayInit()
 {
-	graphXAxis = 1;
-	graphYAxis = 0;
-	
-	secDispBorder = 2.0;
-	secDispSize = 512.0;
-	secDispTextSize = 14;
-	secDispCellHeight = 20;
-	secDispCellWidth = 90;
-	secDispCellInnerMargin = 2.0;
-	secDispCellDivWidth = 2.0;
-	secDispInnerMargin = 5.0;
-	secDispSelAxisX = 0;
-	secDispSelAxisY = 0;
-	secDispTitleHeight = 20.0;
+	canvas = document.querySelector('#baseCanvas');
+	ctx = baseCanvas.getContext('2d');
 	
 	displayContainer = document.querySelector('#displayContainer');
+	displayMode = 0;
+}
+
+function switchDisplayTo(index)
+{
+	displayMode = index;
+	
+	if (index != 1)
+	{
+		pointsCanvas.width	= 0;
+		pointsCanvas.height	= 0;
+		modelCanvas.width	= 0;
+		modelCanvas.height	= 0;
+	}
+	
+	switch (index)
+	{
+		case 0:
+			switchToGraphDisplay();
+			break;
+		case 1:
+			switchToDataGridDisplay();
+			break;
+	}
 }
 
 //===helper functions===

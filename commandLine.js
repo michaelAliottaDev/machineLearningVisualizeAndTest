@@ -25,7 +25,9 @@ function commandLineInit()
 		"save",
 		"load",
 		"show",
-		"clear"
+		"clear",
+		"display graph",
+		"display data grid"
 	];
 	
 	priCommandAknowlg = [
@@ -33,7 +35,9 @@ function commandLineInit()
 		["Read command: Save", ""],
 		["Read command: Load", ""],
 		["Read command: Show", ""],
-		["Read command: Clear", ""]
+		["Read command: Clear", ""],
+		["Read command: Display Graph", ""],
+		["Read command: Display Data Grid", ""]
 	];
 	
 	expectedArguements = [
@@ -41,7 +45,8 @@ function commandLineInit()
 		[],
 		[],
 		["s=#", "p"],
-		["g", "c", "a"]
+		["g", "c", "a"],
+		[]
 	];
 	
 	expArgTitle = [
@@ -49,7 +54,8 @@ function commandLineInit()
 		[],
 		[],
 		["Start At: ", "Points", "All"],
-		["Graph", "Console", "All"]
+		["Graph", "Console", "All"],
+		[]
 	];
 	
 	expArgTitleVar = [
@@ -57,7 +63,8 @@ function commandLineInit()
 		[],
 		[],
 		[true,	false,	false],
-		[false, false,	false]
+		[false, false,	false],
+		[]
 	];
 	
 	commandLineInput = document.querySelector('#inputText');
@@ -231,6 +238,14 @@ function doCommand(command)
 			
 			printRecord();
 		}
+	}
+	else if (commandAsArray[0] == "display graph")
+	{
+		switchDisplayTo(0);
+	}
+	else if (commandAsArray[0] == "display data grid")
+	{
+		switchDisplayTo(1);
 	}
 }
 

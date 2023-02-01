@@ -47,7 +47,10 @@ function inputHandler(input)
 	
 	if (input[0] == "mouse move")
 	{
-		graphLocReport(input[1], input[2]);
+		if (displayMode == 0)
+		{
+			graphLocReport(input[1], input[2]);
+		}
 	}
 	else if (input[0] == "click down")
 	{
@@ -59,62 +62,65 @@ function inputHandler(input)
 		
 		if (clickDownCarry[0] == clickUpVal[0])
 		{
-			if (clickDownCarry[0] == "graph")
+			if (displayMode == 0)
 			{
-				temp = displayPointToGraphPoint(input[1], input[2]);
-				placeGraphPoint(
-					temp[0], 
-					temp[1]
-				);
-				drawPointOnGraph(graphPointsLen - 1);
-			}
-			if (
-				clickDownCarry[0] == "XAxis+" ||
-				clickDownCarry[0] == "XAxis-" ||
-				clickDownCarry[0] == "YAxis+" ||
-				clickDownCarry[0] == "YAxis-"
-				
-			)
-			{
-				if (clickDownCarry[0] == "XAxis+")
+				if (clickDownCarry[0] == "graph")
 				{
-					graphXAxis++;
-					
-					if(graphXAxis > featureCount)
-					{
-						graphXAxis = 0;
-					}
+					temp = displayPointToGraphPoint(input[1], input[2]);
+					placeGraphPoint(
+						temp[0], 
+						temp[1]
+					);
+					drawPointOnGraph(graphPointsLen - 1);
 				}
-				if (clickDownCarry[0] == "XAxis-")
+				if (
+					clickDownCarry[0] == "XAxis+" ||
+					clickDownCarry[0] == "XAxis-" ||
+					clickDownCarry[0] == "YAxis+" ||
+					clickDownCarry[0] == "YAxis-"
+					
+				)
 				{
-					graphXAxis--;
-					
-					if(graphXAxis < 0)
+					if (clickDownCarry[0] == "XAxis+")
 					{
-						graphXAxis = featureCount;
+						graphXAxis++;
+						
+						if(graphXAxis > featureCount)
+						{
+							graphXAxis = 0;
+						}
 					}
-				}
-				if (clickDownCarry[0] == "YAxis+")
-				{
-					graphYAxis++;
-					
-					if(graphYAxis > featureCount)
+					if (clickDownCarry[0] == "XAxis-")
 					{
-						graphYAxis = 0;
+						graphXAxis--;
+						
+						if(graphXAxis < 0)
+						{
+							graphXAxis = featureCount;
+						}
 					}
-				}
-				if (clickDownCarry[0] == "YAxis-")
-				{
-					graphYAxis--;
-					
-					if(graphYAxis < 0)
+					if (clickDownCarry[0] == "YAxis+")
 					{
-						graphYAxis = featureCount;
+						graphYAxis++;
+						
+						if(graphYAxis > featureCount)
+						{
+							graphYAxis = 0;
+						}
 					}
+					if (clickDownCarry[0] == "YAxis-")
+					{
+						graphYAxis--;
+						
+						if(graphYAxis < 0)
+						{
+							graphYAxis = featureCount;
+						}
+					}
+					
+					drawGraphAxisBar();
+					drawAllPointsOnGraph();
 				}
-				
-				drawGraphAxisBar();
-				drawAllPointsOnGraph();
 			}
 		}
 	}

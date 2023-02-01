@@ -7,6 +7,7 @@ function init()
 	graphInit();
 	displayInit();
 	graphDisplayInit();
+	dataGridDisplayInit();
 	inputInit();
 	saveLoadInit();
 	commandLineInit();
