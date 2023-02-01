@@ -4,7 +4,11 @@
 	<meta charset="utf-8"/>
 	<title>Machine Learning Experiment</title>
 	<style type="text/css">
-		body { margin: 0; padding: 0; background: #999;}
+		body { 
+			margin: 0; 
+			padding: 0; 
+			background: #f9feff;
+		}
 		canvas {
 			display: block; 
 			margin: 5px; 
@@ -18,46 +22,48 @@
 			-ms-interpolation-mode: nearest-neighbor;
 		}
 		#baseCanvas {
-			position: absolute;
 			z-index: 1;
 			background: #f9feff;
 		}
 		#graphPointsCanvas {
-			position: absolute;
 			z-index: 3;
 		}
 		#graphModelCanvas {
-			position: absolute;
 			z-index: 2;
 		}
 		#lineRespCanvas {
-			position: absolute;
 			z-index: 3;
 		}
 		#inputText{
-			position: absolute;
 			z-index: 4;
+		}
+		#commandLineResp {
+			cols: 25;
 		}
 	</style>
 	<script src='input.js'></script>
 	<script src='graph.js'></script>
 	<script src='saveLoad.js'></script>
 	<script src='display.js'></script>
+	<script src='displayGraph.js'></script>
 	<script src='commandLine.js'></script>
 	<script src='loader.js'></script>
 </head>
 <body>
-	<canvas id="baseCanvas" width="2048" height="932.5">
-	</canvas>
-	<canvas id="graphPointsCanvas" width="1024" height="932.5">
-	</canvas>
-	<canvas id="graphModelCanvas" width="1024" height="932.5">
-	</canvas>
-	<canvas id="lineRespCanvas" width="1024" height="932.5">
-	</canvas>
+	<div>
+		<canvas id="baseCanvas" width="0" height="0">
+		</canvas>
+		<canvas id="graphPointsCanvas" width="0" height="0">
+		</canvas>
+		<canvas id="graphModelCanvas" width="0" height="0">
+		</canvas>
+	</div>
 	<input type="file" id="fileElem" accept='text/xml' style="display:none" onchange="handleFiles(this.files)">
 	<form name="myform" action="javascript:void(0);" onsubmit="getAction();">
 		<input type="text" id="inputText">
 	</form>
+	<canvas id="lineRespCanvas" width="0" height="0">
+	</canvas>
+	<textarea id="commandLineResp" disabled></textarea>
 </body>
 </html>

@@ -141,27 +141,27 @@ function findClick(input)
 {
 	//detect if the graph was hit
 	if (
-		input[1] >= graphBorder + graphInnerMargin + margin + graphAxisBarWidth &&
-		input[1] <= graphBorder + graphInnerMargin + margin + graphAxisBarWidth + graphSize &&
-		input[2] >= graphBorder + graphInnerMargin + margin &&
-		input[2] <= graphBorder + graphInnerMargin + margin + graphSize 
+		input[1] >= graphBorder + graphInnerMargin + graphAxisBarWidth &&
+		input[1] <= graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize &&
+		input[2] >= graphBorder + graphInnerMargin &&
+		input[2] <= graphBorder + graphInnerMargin + graphSize 
 	)
 	{
 		return ["graph"];
 	}
 	//detect graph's Xaxis block was hit
 	else if (
-		input[1] >= margin + graphBorder + graphAxisBarWidth &&
-		input[1] <= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth &&
-		input[2] >= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize &&
-		input[2] <= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth
+		input[1] >= graphBorder + graphAxisBarWidth &&
+		input[1] <= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth &&
+		input[2] >= graphBorder * 2 + graphInnerMargin * 2 + graphSize &&
+		input[2] <= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth
 	)
 	{
-		if (input[1] >= margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize)
+		if (input[1] >= graphBorder * 2 + graphInnerMargin * 2 + graphSize)
 		{
 			return ["XAxis+"];
 		}
-		else if (input[1] <= margin + graphBorder + graphAxisBarWidth * 2)
+		else if (input[1] <= graphBorder + graphAxisBarWidth * 2)
 		{
 			return ["XAxis-"];
 		}
@@ -172,17 +172,17 @@ function findClick(input)
 	}
 	//detect graph's Yaxis block was hit
 	else if (
-		input[1] >= margin + graphBorder &&
-		input[1] <= margin + graphBorder + graphAxisBarInnerWidth &&
-		input[2] >= margin + graphBorder &&
-		input[2] <= margin + graphBorder + graphSize + graphInnerMargin * 2 
+		input[1] >= graphBorder &&
+		input[1] <= graphBorder + graphAxisBarInnerWidth &&
+		input[2] >= graphBorder &&
+		input[2] <= graphBorder + graphSize + graphInnerMargin * 2 
 	)
 	{
-		if (input[2] <= margin + graphBorder + graphAxisBarInnerWidth)
+		if (input[2] <= graphBorder + graphAxisBarInnerWidth)
 		{
 			return ["YAxis+"];
 		}
-		else if (input[2] >= margin + graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth)
+		else if (input[2] >= graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth)
 		{
 			return ["YAxis-"];
 		}

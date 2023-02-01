@@ -1,35 +1,6 @@
 "use strict"
 
 //===FORMATTING VALUES===
-//default margin for all elements
-var margin;
-
-//colors of graph elements
-var graphBorderCol;
-var graphCol;
-var graphLineCol;
-var graphLineSndCol;
-var graphTextCol;
-var graphTriCol;
-var graphPointsCol;
-
-//colors of axis bars on graph
-var graphAxisBarCol;
-var buttonBorder;
-var buttonSize;
-
-//size of graph elements
-var graphBorder;
-var graphSize;
-var graphLineWidth;
-var graphLineLength;
-var graphInnerMargin;
-var graphLocReportTextSize;
-var graphTextSize;
-var graphAxisBarWidth;
-var graphAxisBarInnerWidth;
-var graphPointRad;
-
 //size of secondary display elements
 var secDispBorder;
 var secDispSize;
@@ -43,10 +14,6 @@ var secDispSelAxisX;
 var secDispSelAxisY;
 var secDispTitleHeight;
 
-//feature on each axis (label if 0)
-var graphXAxis;
-var graphYAxis;
-
 //size of command line elements
 var commandLineRecordTextSize;
 var commandLineRecordTab;
@@ -54,31 +21,8 @@ var commandLineRecordTab;
 //set display values and draw display elements
 function displayInit()
 {
-	margin = 5.0;
-	
-	graphBorderCol = "#dbdbdb";
-	graphLineCol = "#dbdbdb";
-	graphLineSndCol = "#eeeeee";
-	graphCol = "#ffffff";
-	graphTextCol = "#000000"
-	graphTriCol = "#000000"
-	graphPointsCol = "#4ca6ff";
-	
-	graphBorder = 2.0;
-	graphInnerMargin = 5.0;
-	graphSize = 512.0;
-	graphLineWidth = 2.0;
-	graphLineLength = 0.95;
-	graphLocReportTextSize = 14;
-	graphTextSize = 14;
-	graphPointRad = 2.5;
-	
 	graphXAxis = 1;
 	graphYAxis = 0;
-	
-	graphAxisBarCol = "#ffffff";
-	graphAxisBarInnerWidth = 20.0;
-	graphAxisBarWidth = graphAxisBarInnerWidth + (graphBorder * 1.0);
 	
 	secDispBorder = 2.0;
 	secDispSize = 512.0;
@@ -86,25 +30,17 @@ function displayInit()
 	secDispCellHeight = 20;
 	secDispCellWidth = 90;
 	secDispCellInnerMargin = 2.0;
-	secDispCellDivWidth = 4.0;
+	secDispCellDivWidth = 2.0;
 	secDispInnerMargin = 5.0;
 	secDispSelAxisX = 0;
 	secDispSelAxisY = 0;
 	secDispTitleHeight = 20.0;
 	
-	buttonBorder = 2.0;
-	buttonSize = 32.0;
-	
 	commandLineRecordTextSize = 14;
 	commandLineRecordTab = 90;
 	
-	drawGraph();
-	drawGraphAxisBar();
-	
-	drawSecDisp();
-	
-	document.querySelector('#inputText').style.left = (margin * 2) + "px";
-	document.querySelector('#inputText').style.top = (margin * 4 + (graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth) + "px";
+	document.querySelector('#inputText').style.left = "0px";
+	document.querySelector('#inputText').style.top = ((graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth) + "px";
 	document.querySelector('#inputText').style.width = (graphSize + graphInnerMargin * 2 + graphAxisBarWidth) + "px";
 }
 
@@ -113,8 +49,8 @@ function drawSecDisp()
 	ctx.fillStyle = graphBorderCol;
 	fillRect(
 		ctx, 
-		margin * 2 + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
-		margin, 
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
+		0, 
 		secDispBorder * 2 + secDispInnerMargin * 2 + secDispSize,
 		secDispBorder * 2 + secDispInnerMargin * 2 + secDispSize + secDispTitleHeight
 	);
@@ -122,8 +58,8 @@ function drawSecDisp()
 	ctx.fillStyle = graphCol;
 	fillRect(
 		ctx, 
-		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
-		margin + secDispBorder, 
+		secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth, 
+		secDispBorder, 
 		secDispInnerMargin * 2 + secDispSize,
 		secDispInnerMargin * 2 + secDispSize
 	);
@@ -134,61 +70,71 @@ function drawSecDisp()
 	{
 		ctx.beginPath();
 		ctx.fillRect(
-			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (i * 2) + secDispCellInnerMargin * (i * 2) + secDispCellWidth * i + secDispCellDivWidth * (i - 1),
-			margin + secDispBorder + secDispInnerMargin,
+			secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth - secDispCellDivWidth + 
+			i * (secDispInnerMargin * 2 + secDispCellInnerMargin * 2 + secDispCellWidth + secDispCellDivWidth),
+			secDispBorder + secDispInnerMargin,
 			secDispCellDivWidth,
 			secDispSize - secDispInnerMargin
+		);
+	}
+	
+	for (var i = 1; i < 20; i++)
+	{
+		ctx.beginPath();
+		ctx.fillRect(
+			secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin,
+			secDispBorder,
+			secDispSize - secDispInnerMargin,
+			secDispCellDivWidth
 		);
 	}
 	
 	ctx.fillStyle = graphTextCol;
 	ctx.textAlign = "center";
 	
-	ctx.beginPath();
 	ctx.fillText(
 		"Index",
-		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
-		margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+		secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
+		secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
 	);
 	
 	ctx.fillStyle = graphBorderCol;
 	for (var j = 0; j < graphPointsLen; j++)
 	{
-		ctx.beginPath();
 		ctx.fillText(
 			j,
-			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
-			margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
+			secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin + secDispCellInnerMargin + secDispCellWidth * 0.5,
+			secDispBorder * 2 + secDispInnerMargin * 2 + secDispCellHeight * 2 + secDispCellInnerMargin * 2 + 
+			j * (secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin)
 		);
 	}
 	
-	ctx.beginPath();
 	ctx.fillText(
 		"Label",
-		margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
-		margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+		secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
+		secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
 	);
 		
 	for (var j = 0; j < graphPointsLen; j++)
 	{
-		ctx.beginPath();
 		ctx.fillText(
 			graphPoints[0][j],
-			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
-			margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
+			secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 3 + secDispCellInnerMargin * 3 + secDispCellWidth * 1.5 + secDispCellDivWidth,
+			secDispBorder * 2 + secDispInnerMargin * 2 + secDispCellHeight * 2 + secDispCellInnerMargin * 2 + 
+			j * (secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin)
 		);
 	}
 	
 	for (var i = 0; i < featureCount; i++)
 	{
-		ctx.beginPath();
 		ctx.fillText(
 			"Feature " + (1 + i),
-			margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (5 + (i * 2)) + secDispCellInnerMargin * (5 + (i * 2)) + secDispCellWidth * (2.5 + i) + secDispCellDivWidth * 2,
-			margin + secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
+			secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * 5 + secDispCellInnerMargin * 5 + secDispCellWidth * 2.5 + secDispCellDivWidth * 2 + 
+			i * (secDispInnerMargin * 2 + secDispCellInnerMargin * 2 + secDispCellWidth),
+			secDispBorder + secDispInnerMargin + secDispCellHeight + secDispCellInnerMargin
 		);
 		
-		for (var j = 0; j < graphPointsLen; j++)
+		/*for (var j = 0; j < graphPointsLen; j++)
 		{
 			ctx.beginPath();
 			ctx.fillText(
@@ -196,7 +142,7 @@ function drawSecDisp()
 				margin * 2 + secDispBorder + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + secDispInnerMargin * (5 + (i * 2)) + secDispCellInnerMargin * (5 + (i * 2)) + secDispCellWidth * (2.5 + i) + secDispCellDivWidth * 2,
 				margin + secDispBorder * j + secDispInnerMargin * j + secDispCellHeight * j + secDispCellInnerMargin * j
 			);
-		}
+		}*/
 	}
 }
 
@@ -206,8 +152,8 @@ function drawGraph()
 	ctx.fillStyle = graphBorderCol;
 	fillRect(
 		ctx, 
-		margin, 
-		margin, 
+		0, 
+		0, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth,
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth
 	);
@@ -215,8 +161,8 @@ function drawGraph()
 	ctx.fillStyle = graphCol;
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphAxisBarWidth, 
-		margin + graphBorder, 
+		graphBorder + graphAxisBarWidth, 
+		graphBorder, 
 		graphInnerMargin * 2 + graphSize,
 		graphInnerMargin * 2 + graphSize
 	);
@@ -224,29 +170,29 @@ function drawGraph()
 	ctx.fillStyle = graphLineSndCol;
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth, 
-		margin + graphBorder + graphInnerMargin + graphSize / 4 - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin + graphAxisBarWidth, 
+		graphBorder + graphInnerMargin + graphSize / 4 - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth, 
-		margin + graphBorder + graphInnerMargin + (graphSize * 3 / 4) - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin + graphAxisBarWidth, 
+		graphBorder + graphInnerMargin + (graphSize * 3 / 4) - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 4 - graphLineWidth / 2, 
-		margin + graphBorder + graphInnerMargin,
+		graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 4 - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin,
 		graphLineWidth, 
 		graphSize
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth + (graphSize * 3 / 4) - graphLineWidth / 2, 
-		margin + graphBorder + graphInnerMargin,
+		graphBorder + graphInnerMargin + graphAxisBarWidth + (graphSize * 3 / 4) - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin,
 		graphLineWidth, 
 		graphSize
 	);
@@ -254,15 +200,15 @@ function drawGraph()
 	ctx.fillStyle = graphLineCol;
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth, 
-		margin + graphBorder + graphInnerMargin + graphSize / 2 - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin + graphAxisBarWidth, 
+		graphBorder + graphInnerMargin + graphSize / 2 - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 2 - graphLineWidth / 2, 
-		margin + graphBorder + graphInnerMargin,
+		graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 2 - graphLineWidth / 2, 
+		graphBorder + graphInnerMargin,
 		graphLineWidth, 
 		graphSize
 	);
@@ -275,15 +221,15 @@ function drawGraphAxisBar()
 	ctx.fillStyle = graphAxisBarCol;
 	fillRect(
 		ctx, 
-		margin + graphBorder + graphAxisBarWidth, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize,
+		graphBorder + graphAxisBarWidth, 
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize,
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize, 
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
@@ -291,15 +237,15 @@ function drawGraphAxisBar()
 	ctx.fillStyle = graphTriCol;
 	fillEquilatTri(
 		ctx, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
 		7.5, 
 		0
 	)
 	fillEquilatTri(
 		ctx, 
-		margin + graphBorder + graphAxisBarWidth + graphAxisBarInnerWidth / 2,
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
+		graphBorder + graphAxisBarWidth + graphAxisBarInnerWidth / 2,
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
 		7.5, 
 		180
 	)
@@ -308,15 +254,15 @@ function drawGraphAxisBar()
 	ctx.fillStyle = graphAxisBarCol;
 	fillRect(
 		ctx, 
-		margin + graphBorder, 
-		margin + graphBorder,
+		graphBorder, 
+		graphBorder,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	fillRect(
 		ctx, 
-		margin + graphBorder, 
-		margin + graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth,
+		graphBorder, 
+		graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
@@ -324,15 +270,15 @@ function drawGraphAxisBar()
 	ctx.fillStyle = graphTriCol;
 	fillEquilatTri(
 		ctx, 
-		margin + graphBorder + graphAxisBarInnerWidth / 2,
-		margin + graphBorder + graphAxisBarInnerWidth / 2,
+		graphBorder + graphAxisBarInnerWidth / 2,
+		graphBorder + graphAxisBarInnerWidth / 2,
 		7.5, 
 		90
 	)
 	fillEquilatTri(
 		ctx, 
-		margin + graphBorder + graphAxisBarInnerWidth / 2,
-		margin + graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth / 2,
+		graphBorder + graphAxisBarInnerWidth / 2,
+		graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth / 2,
 		7.5, 
 		270
 	)
@@ -342,8 +288,8 @@ function drawGraphAxisBar()
 	//X Label (as in words not ml label)
 	fillRect(
 		ctx, 
-		margin + graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize,
+		graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth, 
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphSize + graphInnerMargin * 2 - (graphBorder * 2) - (graphAxisBarInnerWidth * 2), 
 		graphAxisBarInnerWidth
 	);
@@ -352,8 +298,8 @@ function drawGraphAxisBar()
 	//Y Label (as in words not ml label)
 	fillRect(
 		ctx, 
-		margin + graphBorder, 
-		margin + graphBorder * 2 + graphAxisBarInnerWidth, 
+		graphBorder, 
+		graphBorder * 2 + graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth,
 		graphSize + graphInnerMargin * 2 - (graphBorder * 2) - (graphAxisBarInnerWidth * 2)
 	);
@@ -361,8 +307,8 @@ function drawGraphAxisBar()
 	//feature Count Box
 	fillRect(
 		ctx, 
-		margin + graphBorder, 
-		margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize,
+		graphBorder, 
+		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
@@ -376,24 +322,24 @@ function drawGraphAxisBar()
 	{
 		ctx.fillText(
 			"Label",
-			margin + graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
-			margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
+			graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
+			graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
 		);
 	}
 	else
 	{
 		ctx.fillText(
 			"Feature " + graphXAxis + " / " + featureCount,
-			margin + graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
-			margin + graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
+			graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
+			graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
 		);
 	}
 	
 	ctx.beginPath();
 	ctx.save();
 	ctx.translate(
-		margin + graphBorder + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
-		margin + graphBorder * 2 + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth
+		graphBorder + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
+		graphBorder * 2 + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth
 	);
 	ctx.rotate(-90 * Math.PI / 180);
 	
@@ -458,17 +404,17 @@ function drawPointOnGraph(index)
 function graphLocReport(x, y)
 {
 	ctx.clearRect(
-		margin, 
-		margin + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth, 
-		(graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2 + margin), 
-		margin + (graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth
+		0, 
+		(graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth, 
+		(graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2), 
+		(graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + graphAxisBarWidth
 	);
 	
 	if (
-		x < graphBorder + graphInnerMargin + margin + graphAxisBarWidth ||
-		y < graphBorder + graphInnerMargin + margin ||
-		x > graphBorder + graphInnerMargin + margin + graphAxisBarWidth + graphSize ||
-		y > graphBorder + graphInnerMargin + margin + graphSize 
+		x < graphBorder + graphInnerMargin + graphAxisBarWidth ||
+		y < graphBorder + graphInnerMargin ||
+		x > graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize ||
+		y > graphBorder + graphInnerMargin + graphSize 
 	)
 	{
 		return;
@@ -479,9 +425,9 @@ function graphLocReport(x, y)
 	ctx.textAlign = "left";
 	
 	ctx.fillText(
-		(((x - graphBorder - graphInnerMargin - margin - graphAxisBarWidth) * 2 / graphSize) - 1) + ", " + (((graphSize + graphBorder + graphInnerMargin + margin - y) * 2 / graphSize) - 1),
-		margin, 
-		graphLocReportTextSize + (margin + graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
+		(((x - graphBorder - graphInnerMargin - graphAxisBarWidth) * 2 / graphSize) - 1) + ", " + (((graphSize + graphBorder + graphInnerMargin - y) * 2 / graphSize) - 1),
+		0, 
+		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
 	);
 }
 
@@ -507,8 +453,8 @@ function printRecord()
 		{
 			consoleCtx.fillText(
 				lineRecord[i][j],
-				margin + (j * commandLineRecordTab), 
-				margin * 6 + (graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + inputsize + graphAxisBarWidth + 
+				j * commandLineRecordTab, 
+				(graphBorder + graphInnerMargin) * 2 + graphSize + graphLocReportTextSize + inputsize + graphAxisBarWidth + 
 					(commandLineRecordTextSize * i)
 			);
 		}
@@ -519,8 +465,8 @@ function printRecord()
 function graphPointToDisplayPoint(x, y)
 {
 	return [
-		((x + 1) / 2 * graphSize) + graphAxisBarWidth + graphBorder + graphInnerMargin + margin, 
-		((1 - y) / 2 * graphSize) + graphBorder + graphInnerMargin + margin
+		((x + 1) / 2 * graphSize) + graphAxisBarWidth + graphBorder + graphInnerMargin, 
+		((1 - y) / 2 * graphSize) + graphBorder + graphInnerMargin
 	];
 }
 
@@ -528,8 +474,8 @@ function graphPointToDisplayPoint(x, y)
 function displayPointToGraphPoint(x, y)
 {
 	return [ 
-		((x - graphAxisBarWidth - graphBorder - graphInnerMargin - margin) * 2 / graphSize) - 1,  
-		1 - ((y - graphBorder - graphInnerMargin - margin) * 2 / graphSize)
+		((x - graphAxisBarWidth - graphBorder - graphInnerMargin) * 2 / graphSize) - 1,  
+		1 - ((y - graphBorder - graphInnerMargin) * 2 / graphSize)
 	];
 }
 
