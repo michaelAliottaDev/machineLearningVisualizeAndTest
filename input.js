@@ -5,17 +5,9 @@ var clickDownCarry
 //initializes values of input
 function inputInit()
 {
-	canvas.onmousedown = clickDown;
-	canvas.onmouseup = clickUp;
-	canvas.onmousemove = mouseMove;
-	
-	pointsCanvas.onmousedown = clickDown;
-	pointsCanvas.onmouseup = clickUp;
-	pointsCanvas.onmousemove = mouseMove;
-	
-	modelCanvas.onmousedown = clickDown;
-	modelCanvas.onmouseup = clickUp;
-	modelCanvas.onmousemove = mouseMove;
+	displayContainer.onmousedown = clickDown;
+	displayContainer.onmouseup = clickUp;
+	displayContainer.onmousemove = mouseMove;
 }
 
 //adjusts X and Y of the mouse for its offset on the Canvas

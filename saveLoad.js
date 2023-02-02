@@ -78,7 +78,6 @@ function saveFile()
 	tempText += '</base>';
 	
 	download('test.xml', tempText);
-	addResponse([["Graph Saved to File"]]);
 }
 
 //sets current data to that of a loaded xml file
@@ -110,7 +109,6 @@ function loadFile(file)
 	drawGraph();
 	drawGraphAxisBar();
 	drawAllPointsOnGraph();
-	addResponse([["Graph Loaded to Display"]]);
 }
 
 //===helper functions===

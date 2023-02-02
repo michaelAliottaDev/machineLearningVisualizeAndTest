@@ -21,9 +21,14 @@
 			image-rendering: pixelated;
 			-ms-interpolation-mode: nearest-neighbor;
 		}
-		#baseCanvas {
+		#dataGridBkgrnCanvas {
 			z-index: 1;
-			background: #f9feff;
+		}
+		#dataGridValuesCanvas {
+			z-index: 3;
+		}
+		#graphBkgrnCanvas {
+			z-index: 1;
 		}
 		#graphPointsCanvas {
 			z-index: 3;
@@ -61,7 +66,11 @@
 </head>
 <body>
 	<div id="displayContainer">
-		<canvas id="baseCanvas" width="0" height="0">
+		<canvas id="dataGridBkgrnCanvas" width="0" height="0">
+		</canvas>
+		<canvas id="dataGridValuesCanvas" width="0" height="0">
+		</canvas>
+		<canvas id="graphBkgrnCanvas" width="0" height="0">
 		</canvas>
 		<canvas id="graphPointsCanvas" width="0" height="0">
 		</canvas>

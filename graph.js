@@ -17,8 +17,14 @@ var model;
 //initializes values of the graph
 function graphInit()
 {
-	graphPoints = [[0, 1.0, 0.5, 0.0, -0.5, -1.0]];
-	graphPointsLen = 1;
+	graphPoints = [
+		[0, 1.0, 0.5, 0.0, -0.5, -1.0],
+		[0, 0.5, 0.0, -0.5, -1.0, 1.0],
+		[0, 0.0, -0.5, -1.0, 1.0, 0.5],
+		[0, -0.5, -1.0, 1.0, 0.5, 0.0],
+		[0, -1.0, 1.0, 0.5, 0.0, -0.5]
+	];
+	graphPointsLen = 5;
 	
 	featureCount = 5;
 }

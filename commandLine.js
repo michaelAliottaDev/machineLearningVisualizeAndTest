@@ -206,10 +206,12 @@ function doCommand(command)
 	else if (commandAsArray[0] == "save")
 	{
 		saveFile();
+		addResponse([["Graph Saved to File"]]);
 	}
 	else if (commandAsArray[0] == "load")
 	{
 		openLoadFile();
+		addResponse([["Graph Loaded to Display"]]);
 	}
 	else if (commandAsArray[0] == "clear")
 	{
@@ -242,10 +244,12 @@ function doCommand(command)
 	else if (commandAsArray[0] == "display graph")
 	{
 		switchDisplayTo(0);
+		addResponse([["Display set to Graph Mode"]]);
 	}
 	else if (commandAsArray[0] == "display data grid")
 	{
 		switchDisplayTo(1);
+		addResponse([["Display set to Data Grid Mode"]]);
 	}
 }
 

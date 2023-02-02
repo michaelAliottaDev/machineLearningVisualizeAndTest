@@ -1,34 +1,40 @@
 "use strict"
 
 //===FORMATTING VALUES===
-//"background" canvas
-var canvas;
-var ctx;
+var canvasGallery;
 
 var displayContainer;
 
 var displayMode;
+var modes;
 
 //set display values and draw display elements
 function displayInit()
 {
-	canvas = document.querySelector('#baseCanvas');
-	ctx = baseCanvas.getContext('2d');
+	canvasGallery = [];
+	modes = 2;
 	
 	displayContainer = document.querySelector('#displayContainer');
 	displayMode = 0;
+	
+	for (var i = 0; i < modes; i++)
+	{
+		canvasGallery[i] = [];
+	}
 }
 
 function switchDisplayTo(index)
 {
+	for (var i = 0; i < canvasGallery[displayMode].length; i++)
+	{
+		canvasGallery[displayMode][i].style.visibility = "hidden";
+	}
+	
 	displayMode = index;
 	
-	if (index != 1)
+	for (var i = 0; i < canvasGallery[displayMode].length; i++)
 	{
-		pointsCanvas.width	= 0;
-		pointsCanvas.height	= 0;
-		modelCanvas.width	= 0;
-		modelCanvas.height	= 0;
+		canvasGallery[displayMode][i].style.visibility = "visible";
 	}
 	
 	switch (index)

@@ -1,15 +1,19 @@
 "use strict"
 //display data related specifically to the graph module
+//===Canvases===
+//"background" canvas
+var graphBkgrnCanvas;
+var graphBkgrnCtx;
 
-//===FORMATTING VALUES===
 //canvas specifically for the graph points (so they can be cleared without also redrawing the graph background)
-var pointsCanvas;
-var pointsCtx;
+var graphPointsCanvas;
+var graphPointsCtx;
 
 //canvas specifically for the model (so it can be overlaid over the graph)
-var modelCanvas;
-var modelCtx;
+var graphModelCanvas;
+var graphModelCtx;
 
+//===FORMATTING VALUES===
 //colors of graph elements
 var graphBorderCol;
 var graphCol;
@@ -44,11 +48,17 @@ var graphYAxis;
 //set display values of the graph
 function graphDisplayInit()
 {
-	pointsCanvas = document.querySelector('#graphPointsCanvas');
-	pointsCtx = pointsCanvas.getContext('2d');
+	graphBkgrnCanvas = document.querySelector('#graphBkgrnCanvas');
+	canvasGallery[0][0] = graphBkgrnCanvas;
+	graphBkgrnCtx = graphBkgrnCanvas.getContext('2d');
 	
-	modelCanvas = document.querySelector('#graphModelCanvas');
-	modelCtx = modelCanvas.getContext('2d');
+	graphPointsCanvas = document.querySelector('#graphPointsCanvas');
+	canvasGallery[0][1] = graphPointsCanvas;
+	graphPointsCtx = graphPointsCanvas.getContext('2d');
+	
+	graphModelCanvas = document.querySelector('#graphModelCanvas');
+	canvasGallery[0][2] = graphModelCanvas;
+	graphModelCtx = graphModelCanvas.getContext('2d');
 	
 	graphBorderCol = "#dbdbdb";
 	graphLineCol = "#dbdbdb";
@@ -81,12 +91,12 @@ function graphDisplayInit()
 
 function switchToGraphDisplay()
 {
-	canvas.width					= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
-	canvas.height					= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
-	pointsCanvas.width				= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
-	pointsCanvas.height				= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
-	modelCanvas.width				= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
-	modelCanvas.height				= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
+	graphBkgrnCanvas.width			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
+	graphBkgrnCanvas.height			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
+	graphPointsCanvas.width			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
+	graphPointsCanvas.height		= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
+	graphModelCanvas.width			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth;
+	graphModelCanvas.height			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
 	displayContainer.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
 	displayContainer.style.height	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize) + "px";
 	commandLineInput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
@@ -100,64 +110,64 @@ function switchToGraphDisplay()
 //draws the graph (but not points on the graph)	
 function drawGraph()
 {
-	ctx.fillStyle = graphBorderCol;
+	graphBkgrnCtx.fillStyle = graphBorderCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		0, 
 		0, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth,
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth
 	);
 	
-	ctx.fillStyle = graphCol;
+	graphBkgrnCtx.fillStyle = graphCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphAxisBarWidth, 
 		graphBorder, 
 		graphInnerMargin * 2 + graphSize,
 		graphInnerMargin * 2 + graphSize
 	);
 	
-	ctx.fillStyle = graphLineSndCol;
+	graphBkgrnCtx.fillStyle = graphLineSndCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth, 
 		graphBorder + graphInnerMargin + graphSize / 4 - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth, 
 		graphBorder + graphInnerMargin + (graphSize * 3 / 4) - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 4 - graphLineWidth / 2, 
 		graphBorder + graphInnerMargin,
 		graphLineWidth, 
 		graphSize
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth + (graphSize * 3 / 4) - graphLineWidth / 2, 
 		graphBorder + graphInnerMargin,
 		graphLineWidth, 
 		graphSize
 	);
 	
-	ctx.fillStyle = graphLineCol;
+	graphBkgrnCtx.fillStyle = graphLineCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth, 
 		graphBorder + graphInnerMargin + graphSize / 2 - graphLineWidth / 2, 
 		graphSize,
 		graphLineWidth
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphInnerMargin + graphAxisBarWidth + graphSize / 2 - graphLineWidth / 2, 
 		graphBorder + graphInnerMargin,
 		graphLineWidth, 
@@ -169,32 +179,32 @@ function drawGraph()
 function drawGraphAxisBar()
 {
 	//X Axis Buttons
-	ctx.fillStyle = graphAxisBarCol;
+	graphBkgrnCtx.fillStyle = graphAxisBarCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphAxisBarWidth, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	
-	ctx.fillStyle = graphTriCol;
+	graphBkgrnCtx.fillStyle = graphTriCol;
 	fillEquilatTri(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
 		7.5, 
 		0
 	)
 	fillEquilatTri(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphAxisBarWidth + graphAxisBarInnerWidth / 2,
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2,
 		7.5, 
@@ -202,43 +212,43 @@ function drawGraphAxisBar()
 	)
 	
 	//Y Axis Buttons
-	ctx.fillStyle = graphAxisBarCol;
+	graphBkgrnCtx.fillStyle = graphAxisBarCol;
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder, 
 		graphBorder,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder, 
 		graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	
-	ctx.fillStyle = graphTriCol;
+	graphBkgrnCtx.fillStyle = graphTriCol;
 	fillEquilatTri(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphAxisBarInnerWidth / 2,
 		graphBorder + graphAxisBarInnerWidth / 2,
 		7.5, 
 		90
 	)
 	fillEquilatTri(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder + graphAxisBarInnerWidth / 2,
 		graphBorder + graphSize + graphInnerMargin * 2 - graphAxisBarInnerWidth / 2,
 		7.5, 
 		270
 	)
 	
-	ctx.fillStyle = graphAxisBarCol;
+	graphBkgrnCtx.fillStyle = graphAxisBarCol;
 	
 	//X Label (as in words not ml label)
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphSize + graphInnerMargin * 2 - (graphBorder * 2) - (graphAxisBarInnerWidth * 2), 
@@ -248,7 +258,7 @@ function drawGraphAxisBar()
 	
 	//Y Label (as in words not ml label)
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder, 
 		graphBorder * 2 + graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth,
@@ -257,21 +267,21 @@ function drawGraphAxisBar()
 	
 	//feature Count Box
 	fillRect(
-		ctx, 
+		graphBkgrnCtx, 
 		graphBorder, 
 		graphBorder * 2 + graphInnerMargin * 2 + graphSize,
 		graphAxisBarInnerWidth, 
 		graphAxisBarInnerWidth
 	);
 	
-	ctx.textAlign = "center";
-	ctx.fillStyle = graphTextCol;
-	ctx.font = graphTextSize + "px Arial";
+	graphBkgrnCtx.textAlign = "center";
+	graphBkgrnCtx.fillStyle = graphTextCol;
+	graphBkgrnCtx.font = graphTextSize + "px Arial";
 	
-	ctx.beginPath();
+	graphBkgrnCtx.beginPath();
 	if (graphXAxis == 0)
 	{
-		ctx.fillText(
+		graphBkgrnCtx.fillText(
 			"Label",
 			graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
 			graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
@@ -279,41 +289,41 @@ function drawGraphAxisBar()
 	}
 	else
 	{
-		ctx.fillText(
+		graphBkgrnCtx.fillText(
 			"Feature " + graphXAxis + " / " + featureCount,
 			graphBorder * 2 + graphAxisBarWidth + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth, 
 			graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
 		);
 	}
 	
-	ctx.beginPath();
-	ctx.save();
-	ctx.translate(
+	graphBkgrnCtx.beginPath();
+	graphBkgrnCtx.save();
+	graphBkgrnCtx.translate(
 		graphBorder + graphAxisBarInnerWidth / 2 + (graphTextSize / 4),
 		graphBorder * 2 + graphAxisBarInnerWidth + graphSize / 2 + graphInnerMargin - graphBorder - graphAxisBarInnerWidth
 	);
-	ctx.rotate(-90 * Math.PI / 180);
+	graphBkgrnCtx.rotate(-90 * Math.PI / 180);
 	
 	if (graphYAxis == 0)
 	{
-		ctx.fillText(
+		graphBkgrnCtx.fillText(
 			"Label", 0, 0
 		);
 	}
 	else
 	{
-		ctx.fillText(
+		graphBkgrnCtx.fillText(
 			"Feature " + graphYAxis + " / " + featureCount, 0, 0
 		);
 	}
 	
-	ctx.restore()
+	graphBkgrnCtx.restore()
 }
 
 //draws all points on the graph
 function drawAllPointsOnGraph()
 {
-	pointsCtx.clearRect(0, 0, pointsCanvas.width, pointsCanvas.height);
+	graphPointsCtx.clearRect(0, 0, graphPointsCanvas.width, graphPointsCanvas.height);
 	
 	for (var i = 0; i < graphPointsLen; i++)
 	{
@@ -338,15 +348,15 @@ function drawPointOnGraph(index)
 			graphPoints[index][graphYAxis]
 		);
 		
-		pointsCtx.beginPath();
-		pointsCtx.fillStyle = graphPointsCol;
-		pointsCtx.arc(
+		graphPointsCtx.beginPath();
+		graphPointsCtx.fillStyle = graphPointsCol;
+		graphPointsCtx.arc(
 			tempPoint[0],
 			tempPoint[1],
 			graphPointRad, 
 			0, 2 * Math.PI
 		);
-		pointsCtx.fill();
+		graphPointsCtx.fill();
 	}
 }
 
@@ -354,7 +364,7 @@ function drawPointOnGraph(index)
 //otherwise clear the section which would show that info
 function graphLocReport(x, y)
 {
-	ctx.clearRect(
+	graphBkgrnCtx.clearRect(
 		0, 
 		(graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth, 
 		(graphBorder + graphInnerMargin) * 2 + graphSize - ((buttonBorder * 2 + buttonSize) * 2), 
@@ -371,17 +381,17 @@ function graphLocReport(x, y)
 		return;
 	}
 	
-	ctx.fillStyle = "#000000";
-	ctx.font= graphLocReportTextSize + "px Arial";
-	ctx.textAlign = "left";
+	graphBkgrnCtx.fillStyle = graphTextCol;
+	graphBkgrnCtx.font= graphLocReportTextSize + "px Arial";
+	graphBkgrnCtx.textAlign = "left";
 	
-	ctx.fillText(
+	graphBkgrnCtx.fillText(
 		(((x - graphBorder - graphInnerMargin - graphAxisBarWidth) * 2 / graphSize) - 1),
 		0, 
 		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth
 	);
 	
-	ctx.fillText(
+	graphBkgrnCtx.fillText(
 		(((graphSize + graphBorder + graphInnerMargin - y) * 2 / graphSize) - 1),
 		graphTextWidth, 
 		graphLocReportTextSize + (graphBorder + graphInnerMargin) * 2 + graphSize + graphAxisBarWidth

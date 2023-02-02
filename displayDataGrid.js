@@ -1,4 +1,13 @@
 "use strict"
+//===CANVASES===
+//"background" canvas
+var dataGridBkgrnCanvas;
+var dataGridBkgrnCtx;
+
+var dataGridValuesCanvas;
+var dataGridValuesCtx;
+
+//===FORMATTING VALUES===
 //colors of data grid elements
 var dataGridBorderCol;
 var dataGridCol;
@@ -7,7 +16,6 @@ var dataGridTextCol;
 
 //size of data grid elements
 var dataGridBorder;
-var dataGridSize;
 var dataGridTextSize;
 var dataGridCellHeight;
 var dataGridCellWidth;
@@ -18,17 +26,29 @@ var dataGridInnerMargin;
 var dataGridSelAxisX;
 var dataGridSelAxisY;
 var dataGridTitleHeight;
+var dataGridWidth;
+var dataGridHeight;
+
+var dataGridStrRow;
+var dataGridStrCol;
 
 //set display values of the data grid
 function dataGridDisplayInit()
 {
+	dataGridBkgrnCanvas = document.querySelector('#dataGridBkgrnCanvas');
+	canvasGallery[1][0] = dataGridBkgrnCanvas;
+	dataGridBkgrnCtx = dataGridBkgrnCanvas.getContext('2d');
+	
+	dataGridValuesCanvas = document.querySelector('#dataGridValuesCanvas');
+	canvasGallery[1][1] = dataGridValuesCanvas;
+	dataGridValuesCtx = dataGridValuesCanvas.getContext('2d');
+	
 	dataGridBorderCol = "#dbdbdb";
 	dataGridLineCol = "#dbdbdb";
 	dataGridCol = "#ffffff";
 	dataGridTextCol = "#000000"
 	
 	dataGridBorder = 2.0;
-	dataGridSize = 512.0;
 	dataGridTextSize = 14;
 	dataGridCellHeight = 20;
 	dataGridCellWidth = 90;
@@ -39,30 +59,152 @@ function dataGridDisplayInit()
 	dataGridSelAxisX = 0;
 	dataGridSelAxisY = 0;
 	dataGridTitleHeight = 20.0;
+	
+	dataGridWidth = dataGridCellInnerMargin * 22 + dataGridIndexCellWidth + dataGridCellWidth * 10 + dataGridCellDivWidth * 9;
+	dataGridHeight = dataGridCellInnerMargin * 40 + dataGridCellHeight * 20 + dataGridCellDivWidth * 19;
+	
+	dataGridStrRow = 0;
+	dataGridStrCol = 0;
 }
 
 function switchToDataGridDisplay()
 {
+	dataGridBkgrnCanvas.width		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth;
+	dataGridBkgrnCanvas.height		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
+	dataGridValuesCanvas.width		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth;
+	dataGridValuesCanvas.height		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
+	displayContainer.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
+	displayContainer.style.height	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight) + "px";
+	commandLineInput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
+	commandLineOutput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
+	
 	drawDataGrid();
 }
 
 function drawDataGrid()
 {
-	ctx.fillStyle = dataGridBorderCol;
+	dataGridBkgrnCtx.fillStyle = dataGridBorderCol;
 	fillRect(
-		ctx, 
+		dataGridBkgrnCtx, 
 		0, 
 		0, 
-		dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridSize,
-		dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridSize
+		dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth,
+		dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight
 	);
 	
-	ctx.fillStyle = dataGridCol;
+	dataGridBkgrnCtx.fillStyle = dataGridCol;
 	fillRect(
-		ctx, 
+		dataGridBkgrnCtx, 
 		dataGridBorder, 
 		dataGridBorder, 
-		dataGridInnerMargin * 2 + dataGridSize,
-		dataGridInnerMargin * 2 + dataGridSize
+		dataGridInnerMargin * 2 + dataGridWidth,
+		dataGridInnerMargin * 2 + dataGridHeight
 	);
+	
+	//vertical lines
+	dataGridBkgrnCtx.fillStyle = dataGridLineCol;
+	fillRect(
+		dataGridBkgrnCtx, 
+		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 2 + dataGridIndexCellWidth, 
+		dataGridBorder + dataGridInnerMargin, 
+		dataGridCellDivWidth,
+		dataGridHeight
+	);
+	
+	for (var i = 0; i + dataGridStrCol < featureCount && i < 9; i++)
+	{
+		fillRect(
+			dataGridBkgrnCtx, 
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 4 + dataGridIndexCellWidth + dataGridCellWidth + dataGridCellDivWidth + 
+				i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
+			dataGridBorder + dataGridInnerMargin, 
+			dataGridCellDivWidth,
+			dataGridHeight
+		);
+	}
+	
+	//horizontal lines
+	for (var i = 0; i + dataGridStrRow < graphPointsLen && i < 19; i++)
+	{
+		fillRect(
+			dataGridBkgrnCtx,  
+			dataGridBorder + dataGridInnerMargin,
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth + 
+				i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth),
+			dataGridWidth,
+			dataGridCellDivWidth
+		);
+	}
+	
+	//Index Labels
+	dataGridValuesCtx.fillStyle = dataGridTextCol;
+	dataGridValuesCtx.font= dataGridTextSize + "px Arial";
+	dataGridValuesCtx.textAlign = "center";
+	
+	dataGridValuesCtx.fillText(
+		"#",
+		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridIndexCellWidth / 2, 
+		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+	);
+	
+	for (var i = 0; i + dataGridStrRow < graphPointsLen && i < 20; i++)
+	{
+		dataGridValuesCtx.fillText(
+			(i + 1 + dataGridStrCol) + "",
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridIndexCellWidth / 2,
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+				i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
+		);
+	}
+	
+	//Column Labels
+	for (var i = 0; i + dataGridStrCol < featureCount + 1 && i < 10; i++)
+	{
+		if (i + dataGridStrCol == 0)
+		{
+			dataGridValuesCtx.fillText(
+				"Label",
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
+					i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+			);
+		}
+		else
+		{
+			dataGridValuesCtx.fillText(
+				"Feature " + (i + dataGridStrCol),
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
+					i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+			);
+		}
+	}
+	
+	//Values
+	for (var i = 0; i + dataGridStrRow < graphPointsLen && i < 20; i++)
+	{
+		for (var j = 0; j + dataGridStrCol < featureCount + 1 && j < 10; j++)
+		{
+			if (graphPoints[i + dataGridStrRow][j + dataGridStrCol] !== undefined)
+			{
+				dataGridValuesCtx.fillText(
+					graphPoints[i + dataGridStrRow][j + dataGridStrCol] + "",
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
+						j * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+						i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
+				);
+			}
+			else
+			{
+				dataGridValuesCtx.fillText(
+					"--",
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
+						j * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+						i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
+				);
+			}
+		}
+	}
 }
