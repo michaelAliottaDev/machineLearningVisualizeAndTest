@@ -14,6 +14,7 @@ var selectedPoint;
 //[0] = Bias
 //[1] = Feature (m) weight
 var model;
+var modelActive;
 
 //initializes values of the graph
 function graphInit()
@@ -23,6 +24,8 @@ function graphInit()
 	
 	featureCount = 1;
 	selectedPoint = -1;
+	
+	modelActive = false;
 }
 
 //adds a point to the graph data
@@ -67,4 +70,16 @@ function changeSelectedPoint(index)
 	
 	drawAllPointsOnGraph();
 	highlightSelected();
+}
+
+function activateModel()
+{
+	//initialize the model with a bias of 0 and all weights set to 1
+	//seems like as good a default as any
+	model = [0];
+	
+	for (var i = 0; i < featureCount; i++)
+	{
+		model[i + 1] = 1.0;
+	}
 }

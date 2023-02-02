@@ -109,6 +109,7 @@ function loadFile(file)
 	drawGraph();
 	drawGraphAxisBar();
 	drawAllPointsOnGraph();
+	drawDataGrid();
 }
 
 //===helper functions===

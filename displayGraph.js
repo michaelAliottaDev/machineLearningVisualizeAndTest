@@ -111,6 +111,18 @@ function switchToGraphDisplay()
 	drawAllPointsOnGraph();
 }
 
+function drawModel()
+{
+	var projOnSides = [
+		(1 - model[0]) / model[graphYAxis],		//value of Y, when X = -1
+		(-1 - model[0]) / model[graphYAxis],	//value of Y, when X = +1
+		(1 - model[0]) / model[graphYAxis],		//value of X, when Y = -1
+		(-1 - model[0]) / model[graphYAxis],	//value of X, when Y = +1
+	];
+	
+	console.log(projOnSides);
+}
+
 //draws the graph (but not points on the graph)	
 function drawGraph()
 {

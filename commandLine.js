@@ -28,7 +28,8 @@ function commandLineInit()
 		"clear",
 		"display graph",
 		"display data grid",
-		"select"
+		"select",
+		"activate model"
 	];
 	
 	priCommandAknowlg = [
@@ -39,7 +40,8 @@ function commandLineInit()
 		["Read command: Clear", ""],
 		["Read command: Display Graph", ""],
 		["Read command: Display Data Grid", ""],
-		["Read command: Select", ""]
+		["Read command: Select", ""],
+		["Read command: Activate Model", ""]
 	];
 	
 	expectedArguements = [
@@ -50,7 +52,8 @@ function commandLineInit()
 		["g", "c", "a"],
 		[],
 		[],
-		["p=#"]
+		["p=#"],
+		[]
 	];
 	
 	expArgTitle = [
@@ -61,7 +64,8 @@ function commandLineInit()
 		["Graph", "Console", "All"],
 		[],
 		[],
-		["Point: "]
+		["Point: "],
+		[]
 	];
 	
 	expArgTitleVar = [
@@ -72,7 +76,8 @@ function commandLineInit()
 		[false, false,	false],
 		[],
 		[],
-		[true]
+		[true],
+		[]
 	];
 	
 	commandLineInput = document.querySelector('#inputText');
@@ -273,6 +278,12 @@ function doCommand(command)
 	{
 		switchDisplayTo(1);
 		addResponse([["Display set to Data Grid Mode"]]);
+	}
+	else if (commandAsArray[0] == "activate model")
+	{
+		activateModel();
+		drawModel();
+		addResponse([["Model Activated"]]);
 	}
 }
 
