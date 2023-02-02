@@ -7,12 +7,16 @@ var dataGridBkgrnCtx;
 var dataGridValuesCanvas;
 var dataGridValuesCtx;
 
+var dataGridHiLightCanvas;
+var dataGridHiLightCtx;
+
 //===FORMATTING VALUES===
 //colors of data grid elements
 var dataGridBorderCol;
 var dataGridCol;
 var dataGridLineCol;
 var dataGridTextCol;
+var dataGridSelCol;
 
 //size of data grid elements
 var dataGridBorder;
@@ -39,14 +43,19 @@ function dataGridDisplayInit()
 	canvasGallery[1][0] = dataGridBkgrnCanvas;
 	dataGridBkgrnCtx = dataGridBkgrnCanvas.getContext('2d');
 	
+	dataGridHiLightCanvas = document.querySelector('#dataGridHiLightCanvas');
+	canvasGallery[1][1] = dataGridHiLightCanvas;
+	dataGridHiLightCtx = dataGridHiLightCanvas.getContext('2d');
+	
 	dataGridValuesCanvas = document.querySelector('#dataGridValuesCanvas');
-	canvasGallery[1][1] = dataGridValuesCanvas;
+	canvasGallery[1][2] = dataGridValuesCanvas;
 	dataGridValuesCtx = dataGridValuesCanvas.getContext('2d');
 	
 	dataGridBorderCol = "#dbdbdb";
 	dataGridLineCol = "#dbdbdb";
 	dataGridCol = "#ffffff";
-	dataGridTextCol = "#000000"
+	dataGridTextCol = "#000000";
+	dataGridSelCol = "#80ff80";
 	
 	dataGridBorder = 2.0;
 	dataGridTextSize = 14;
@@ -73,12 +82,39 @@ function switchToDataGridDisplay()
 	dataGridBkgrnCanvas.height		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
 	dataGridValuesCanvas.width		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth;
 	dataGridValuesCanvas.height		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
+	dataGridHiLightCanvas.width		= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth;
+	dataGridHiLightCanvas.height	= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
 	displayContainer.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
 	displayContainer.style.height	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight) + "px";
 	commandLineInput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
 	commandLineOutput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
 	
 	drawDataGrid();
+	highlightSelected();
+}
+
+function highlightSelected()
+{
+	dataGridHiLightCtx.clearRect(0, 0, dataGridHiLightCanvas.width, dataGridHiLightCanvas.height);
+	
+	if (
+		selectedPoint >= 0 &&
+		selectedPoint >= dataGridStrRow && 
+		selectedPoint < graphPointsLen && 
+		selectedPoint < dataGridStrRow + 20
+	)
+	{
+		dataGridHiLightCtx.fillStyle = dataGridSelCol;
+		
+		fillRect(
+			dataGridHiLightCtx, 
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin, 
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight + dataGridCellDivWidth +
+				(selectedPoint - dataGridStrRow) * (dataGridCellHeight + dataGridCellInnerMargin * 2 + dataGridCellDivWidth), 
+			dataGridWidth - dataGridCellInnerMargin * 2,
+			dataGridCellHeight
+		);
+	}
 }
 
 function drawDataGrid()
@@ -102,9 +138,9 @@ function drawDataGrid()
 	);
 	
 	//vertical lines
-	dataGridBkgrnCtx.fillStyle = dataGridLineCol;
+	dataGridValuesCtx.fillStyle = dataGridLineCol;
 	fillRect(
-		dataGridBkgrnCtx, 
+		dataGridValuesCtx, 
 		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 2 + dataGridIndexCellWidth, 
 		dataGridBorder + dataGridInnerMargin, 
 		dataGridCellDivWidth,
@@ -114,7 +150,7 @@ function drawDataGrid()
 	for (var i = 0; i + dataGridStrCol < featureCount && i < 9; i++)
 	{
 		fillRect(
-			dataGridBkgrnCtx, 
+			dataGridValuesCtx, 
 			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 4 + dataGridIndexCellWidth + dataGridCellWidth + dataGridCellDivWidth + 
 				i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
 			dataGridBorder + dataGridInnerMargin, 
@@ -127,9 +163,9 @@ function drawDataGrid()
 	for (var i = 0; i + dataGridStrRow < graphPointsLen && i < 19; i++)
 	{
 		fillRect(
-			dataGridBkgrnCtx,  
+			dataGridValuesCtx,  
 			dataGridBorder + dataGridInnerMargin,
-			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth + 
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 2 + dataGridCellHeight + 
 				i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth),
 			dataGridWidth,
 			dataGridCellDivWidth
@@ -144,7 +180,7 @@ function drawDataGrid()
 	dataGridValuesCtx.fillText(
 		"#",
 		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridIndexCellWidth / 2, 
-		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+		dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 3
 	);
 	
 	for (var i = 0; i + dataGridStrRow < graphPointsLen && i < 20; i++)
@@ -152,7 +188,7 @@ function drawDataGrid()
 		dataGridValuesCtx.fillText(
 			(i + 1 + dataGridStrCol) + "",
 			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridIndexCellWidth / 2,
-			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+			dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 3 +
 				i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
 		);
 	}
@@ -166,7 +202,7 @@ function drawDataGrid()
 				"Label",
 				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
 					i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
-				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 3
 			);
 		}
 		else
@@ -175,7 +211,7 @@ function drawDataGrid()
 				"Feature " + (i + dataGridStrCol),
 				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
 					i * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
-				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 2
+				dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin + dataGridCellHeight / 2 + dataGridTextSize / 3
 			);
 		}
 	}
@@ -191,7 +227,7 @@ function drawDataGrid()
 					graphPoints[i + dataGridStrRow][j + dataGridStrCol] + "",
 					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
 						j * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
-					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 3 +
 						i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
 				);
 			}
@@ -201,7 +237,7 @@ function drawDataGrid()
 					"--",
 					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridIndexCellWidth + dataGridCellDivWidth + dataGridCellWidth / 2 + 
 						j * (dataGridCellInnerMargin * 2 + dataGridCellWidth + dataGridCellDivWidth),
-					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 2 +
+					dataGridBorder + dataGridInnerMargin + dataGridCellInnerMargin * 3 + dataGridCellHeight * (3 / 2) + dataGridCellDivWidth + dataGridTextSize / 3 +
 						i * (dataGridCellInnerMargin * 2 + dataGridCellHeight + dataGridCellDivWidth)
 				);
 			}

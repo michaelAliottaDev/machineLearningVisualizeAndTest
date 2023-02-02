@@ -27,7 +27,8 @@ function commandLineInit()
 		"show",
 		"clear",
 		"display graph",
-		"display data grid"
+		"display data grid",
+		"select"
 	];
 	
 	priCommandAknowlg = [
@@ -37,7 +38,8 @@ function commandLineInit()
 		["Read command: Show", ""],
 		["Read command: Clear", ""],
 		["Read command: Display Graph", ""],
-		["Read command: Display Data Grid", ""]
+		["Read command: Display Data Grid", ""],
+		["Read command: Select", ""]
 	];
 	
 	expectedArguements = [
@@ -46,7 +48,9 @@ function commandLineInit()
 		[],
 		["s=#", "p"],
 		["g", "c", "a"],
-		[]
+		[],
+		[],
+		["p=#"]
 	];
 	
 	expArgTitle = [
@@ -55,7 +59,9 @@ function commandLineInit()
 		[],
 		["Start At: ", "Points", "All"],
 		["Graph", "Console", "All"],
-		[]
+		[],
+		[],
+		["Point: "]
 	];
 	
 	expArgTitleVar = [
@@ -64,7 +70,9 @@ function commandLineInit()
 		[],
 		[true,	false,	false],
 		[false, false,	false],
-		[]
+		[],
+		[],
+		[true]
 	];
 	
 	commandLineInput = document.querySelector('#inputText');
@@ -195,13 +203,28 @@ function doCommand(command)
 		response[respLength + 2] = ["load:", "Load an xml file of a graph set the current graph to it"];
 		response[respLength + 3] = ["show:", "Output info to the console about something, does nothing without an argument"];
 		response[respLength + 4] = ["clear:", "Clear the graph and the console"];
+		response[respLength + 5] = ["display:", "Switch which set of data is displayed"];
+		response[respLength + 6] = ["select:", "Select one point (deselect all others)"];
 
 		addResponse(response);
-		response += 5;
 	}
 	else if (commandAsArray[0] == "show")
 	{
 		show (yesReq, yesReqLength)
+	}
+	else if (commandAsArray[0] == "select")
+	{
+		if (yesReq[0][0] == "p=#")
+		{
+			if (typeof(yesReq[0][1] - 0) == "number" && yesReq[0][1] - 0 == Math.floor(yesReq[0][1] - 0))
+			{
+				changeSelectedPoint(yesReq[0][1] - 0);
+			}
+			else
+			{
+				addResponse([["Invalid Selection, (Only Integers Accepted)"]]);
+			}
+		}
 	}
 	else if (commandAsArray[0] == "save")
 	{
@@ -331,7 +354,7 @@ function show(args, argsLen)
 	
 	if (!tarSet)
 	{
-		addResponse(["Nothing Selected (try an argument)"]);
+		addResponse([["Nothing Selected (try an argument)"]]);
 		return;
 	}
 	

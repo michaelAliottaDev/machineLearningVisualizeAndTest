@@ -22,6 +22,7 @@ var graphLineSndCol;
 var graphTextCol;
 var graphTriCol;
 var graphPointsCol;
+var graphPointsSelCol;
 
 //colors of axis bars on graph
 var graphAxisBarCol;
@@ -66,7 +67,10 @@ function graphDisplayInit()
 	graphCol = "#ffffff";
 	graphTextCol = "#000000"
 	graphTriCol = "#000000"
-	graphPointsCol = "#4ca6ff";
+	//graphPointsCol = "#4da6ff";
+	//graphPointsSelCol = "#ffa64d";
+	graphPointsCol = "#000000";
+	graphPointsSelCol = "#80ff80";
 	
 	graphBorder = 2.0;
 	graphInnerMargin = 5.0;
@@ -349,7 +353,15 @@ function drawPointOnGraph(index)
 		);
 		
 		graphPointsCtx.beginPath();
-		graphPointsCtx.fillStyle = graphPointsCol;
+		if(index != selectedPoint)
+		{
+			graphPointsCtx.fillStyle = graphPointsCol;
+		}
+		else
+		{
+			graphPointsCtx.fillStyle = graphPointsSelCol;
+		}
+		
 		graphPointsCtx.arc(
 			tempPoint[0],
 			tempPoint[1],

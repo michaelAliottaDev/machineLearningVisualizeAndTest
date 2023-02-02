@@ -58,12 +58,24 @@ function inputHandler(input)
 			{
 				if (clickDownCarry[0] == "graph")
 				{
-					temp = displayPointToGraphPoint(input[1], input[2]);
-					placeGraphPoint(
-						temp[0], 
-						temp[1]
-					);
-					drawPointOnGraph(graphPointsLen - 1);
+					if (selectedPoint == -1)
+					{
+						temp = displayPointToGraphPoint(input[1], input[2]);
+						placeGraphPoint(
+							temp[0], 
+							temp[1]
+						);
+						drawPointOnGraph(graphPointsLen - 1);
+					}
+					else
+					{
+						temp = displayPointToGraphPoint(input[1], input[2]);
+						addToSelectedGraphPoint(
+							temp[0], 
+							temp[1]
+						);
+						drawPointOnGraph(graphPointsLen - 1);
+					}
 				}
 				if (
 					clickDownCarry[0] == "XAxis+" ||

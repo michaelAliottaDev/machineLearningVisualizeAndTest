@@ -8,6 +8,7 @@ var graphPoints;
 var graphPointsLen;
 
 var featureCount;
+var selectedPoint;
 
 //always in the form
 //[0] = Bias
@@ -17,16 +18,11 @@ var model;
 //initializes values of the graph
 function graphInit()
 {
-	graphPoints = [
-		[0, 1.0, 0.5, 0.0, -0.5, -1.0],
-		[0, 0.5, 0.0, -0.5, -1.0, 1.0],
-		[0, 0.0, -0.5, -1.0, 1.0, 0.5],
-		[0, -0.5, -1.0, 1.0, 0.5, 0.0],
-		[0, -1.0, 1.0, 0.5, 0.0, -0.5]
-	];
-	graphPointsLen = 5;
+	graphPoints = [];
+	graphPointsLen = 0;
 	
-	featureCount = 5;
+	featureCount = 1;
+	selectedPoint = -1;
 }
 
 //adds a point to the graph data
@@ -38,9 +34,37 @@ function placeGraphPoint(x, y)
 	graphPointsLen++;
 }
 
+function addToSelectedGraphPoint(x, y)
+{
+	if (graphPoints[selectedPoint][graphXAxis] === undefined)
+	{
+		graphPoints[selectedPoint][graphXAxis] = x;
+	}
+	
+	if (graphPoints[selectedPoint][graphYAxis] === undefined)
+	{
+		graphPoints[selectedPoint][graphYAxis] = y;
+	}
+}
+
 //resets graph data
 function clearGraph()
 {
 	graphInit();
 	drawAllPointsOnGraph();
+}
+
+function changeSelectedPoint(index)
+{
+	if (index >= 0 && index < graphPointsLen && index == Math.floor(index))
+	{
+		selectedPoint = index;
+	}
+	else
+	{
+		selectedPoint = -1;
+	}
+	
+	drawAllPointsOnGraph();
+	highlightSelected();
 }
