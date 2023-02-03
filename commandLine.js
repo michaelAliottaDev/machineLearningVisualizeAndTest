@@ -215,6 +215,8 @@ function doCommand(command)
 		response[respLength + 4] = ["clear:", "Clear the graph and the console"];
 		response[respLength + 5] = ["display:", "Switch which set of data is displayed"];
 		response[respLength + 6] = ["select:", "Select one point (deselect all others)"];
+		response[respLength + 7] = ["activate model:", "initializes the model and shows it on the graph"];
+		response[respLength + 7] = ["calc loss:", "calculates loss for the model (also initializes the model if it hasn't already)"];
 
 		addResponse(response);
 	}
