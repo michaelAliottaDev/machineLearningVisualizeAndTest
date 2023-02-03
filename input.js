@@ -124,6 +124,10 @@ function inputHandler(input)
 					
 					drawGraphAxisBar();
 					drawAllPointsOnGraph();
+					if (modelActive)
+					{
+						drawModel();
+					}
 				}
 			}
 		}

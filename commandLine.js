@@ -29,7 +29,8 @@ function commandLineInit()
 		"display graph",
 		"display data grid",
 		"select",
-		"activate model"
+		"activate model",
+		"calc loss"
 	];
 	
 	priCommandAknowlg = [
@@ -41,7 +42,8 @@ function commandLineInit()
 		["Read command: Display Graph", ""],
 		["Read command: Display Data Grid", ""],
 		["Read command: Select", ""],
-		["Read command: Activate Model", ""]
+		["Read command: Activate Model", ""],
+		["Read command: Calculate Loss", ""]
 	];
 	
 	expectedArguements = [
@@ -53,6 +55,7 @@ function commandLineInit()
 		[],
 		[],
 		["p=#"],
+		[],
 		[]
 	];
 	
@@ -65,6 +68,7 @@ function commandLineInit()
 		[],
 		[],
 		["Point: "],
+		[],
 		[]
 	];
 	
@@ -77,6 +81,7 @@ function commandLineInit()
 		[],
 		[],
 		[true],
+		[],
 		[]
 	];
 	
@@ -283,6 +288,13 @@ function doCommand(command)
 	{
 		activateModel();
 		drawModel();
+		addResponse([["Model Activated"]]);
+	}
+	else if (commandAsArray[0] == "calc loss")
+	{
+		activateModel();
+		drawModel();
+		drawLoss();
 		addResponse([["Model Activated"]]);
 	}
 }

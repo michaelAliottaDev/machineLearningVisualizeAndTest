@@ -23,6 +23,8 @@ var graphTextCol;
 var graphTriCol;
 var graphPointsCol;
 var graphPointsSelCol;
+var graphModelCol;
+var graphLossCol;
 
 //colors of axis bars on graph
 var graphAxisBarCol;
@@ -41,6 +43,9 @@ var graphTextWidth;
 var graphAxisBarWidth;
 var graphAxisBarInnerWidth;
 var graphPointRad;
+var graphModelRad;
+var graphLossRad;
+var graphLossAlpha;
 
 //feature on each axis (label if 0)
 var graphXAxis;
@@ -71,6 +76,8 @@ function graphDisplayInit()
 	//graphPointsSelCol = "#ffa64d";
 	graphPointsCol = "#000000";
 	graphPointsSelCol = "#80ff80";
+	graphModelCol = "#00cccc";
+	graphLossCol = "#ff3333";
 	
 	graphBorder = 2.0;
 	graphInnerMargin = 5.0;
@@ -81,6 +88,9 @@ function graphDisplayInit()
 	graphTextSize = 14;
 	graphTextWidth = 90;
 	graphPointRad = 2.5;
+	graphModelRad = 4.0;
+	graphLossRad = 1.0;
+	graphLossAlpha = 0.5;
 	
 	graphXAxis = 1;
 	graphYAxis = 0;
@@ -111,16 +121,207 @@ function switchToGraphDisplay()
 	drawAllPointsOnGraph();
 }
 
+function drawLoss()
+{
+	var projPoint;
+	var lossTotal = 0.0;
+	var realExmpCount = 0;
+	var realFeatCount = 0;
+	
+	for (var i = 0; i < graphPointsLen; i++)
+	{
+		if (graphPoints[i][0] !== undefined)
+		{
+			projPoint = model[0];
+			realExmpCount++;
+			
+			for (var j = 1; j < featureCount + 1; j++)
+			{
+				if (graphPoints[i][j] !== undefined)
+				{
+					projPoint += model[j] * graphPoints[i][j];
+					realFeatCount++;
+				}
+			}
+			
+			if (projPoint > 1)
+			{
+				projPoint = 1;
+			}
+			
+			if (projPoint < -1)
+			{
+				projPoint = -1;
+			}
+			
+			lossTotal += (graphPoints[i][0] - projPoint) * (graphPoints[i][0] - projPoint);
+		}
+	}
+	
+	graphModelCtx.strokeStyle = graphLossCol;
+	graphModelCtx.fillStyle = graphLossCol;
+	graphModelCtx.lineWidth = graphLossRad;
+	
+	graphModelCtx.textAlign = "right";
+	graphModelCtx.font = graphTextSize + "px Arial";
+	
+	graphModelCtx.fillText(
+		lossTotal / graphPointsLen,
+		graphBorder + graphInnerMargin + graphSize + graphAxisBarWidth,
+		graphBorder + graphInnerMargin + graphSize - graphTextSize * 2
+	);
+	
+	graphModelCtx.fillText(
+		lossTotal / realExmpCount,
+		graphBorder + graphInnerMargin + graphSize + graphAxisBarWidth,
+		graphBorder + graphInnerMargin + graphSize - graphTextSize
+	);
+	
+	graphModelCtx.fillText(
+		lossTotal / realFeatCount,
+		graphBorder + graphInnerMargin + graphSize + graphAxisBarWidth,
+		graphBorder + graphInnerMargin + graphSize
+	);
+	
+	graphModelCtx.globalAlpha = graphLossAlpha;
+	
+	if (graphXAxis == 0 && graphYAxis == 0)
+	{
+		//both are the label(?) (we're done here)
+		graphModelCtx.globalAlpha = 1.0;
+		return;
+	}
+	else if (graphXAxis == 0)
+	{
+		//x axis is the label
+		for (var i = 0; i < graphPointsLen; i++)
+		{
+			if (graphPoints[i][graphYAxis] !== undefined)
+			{
+				graphModelCtx.beginPath();
+				
+				projPoint = graphPointToDisplayPoint(
+					graphPoints[i][0],
+					graphPoints[i][graphYAxis]
+				);
+				graphModelCtx.moveTo(projPoint[0], projPoint[1]);
+	
+				projPoint = graphPointToDisplayPoint(
+					model[0] + (graphPoints[i][graphYAxis] * model[graphYAxis]),
+					graphPoints[i][graphYAxis]
+				);
+				graphModelCtx.lineTo(projPoint[0], projPoint[1]);
+				
+				graphModelCtx.stroke();
+			}
+		}
+	}
+	else if (graphYAxis == 0)
+	{
+		//y axis is the label
+		for (var i = 0; i < graphPointsLen; i++)
+		{
+			if (graphPoints[i][graphXAxis] !== undefined)
+			{
+				graphModelCtx.beginPath();
+				
+				projPoint = graphPointToDisplayPoint(
+					graphPoints[i][graphXAxis], 
+					graphPoints[i][0]
+				);
+				graphModelCtx.moveTo(projPoint[0], projPoint[1]);
+	
+				projPoint = graphPointToDisplayPoint(
+					graphPoints[i][graphXAxis], 
+					model[0] + (graphPoints[i][graphXAxis] * model[graphXAxis])
+				);
+				graphModelCtx.lineTo(projPoint[0], projPoint[1]);
+				
+				graphModelCtx.stroke();
+			}
+		}
+	}
+	else
+	{
+		//neither is the label (we're done here)
+		graphModelCtx.globalAlpha = 1.0;
+		return;
+	}
+	
+	
+	graphModelCtx.globalAlpha = 1.0;
+}
+
 function drawModel()
 {
-	var projOnSides = [
-		(1 - model[0]) / model[graphYAxis],		//value of Y, when X = -1
-		(-1 - model[0]) / model[graphYAxis],	//value of Y, when X = +1
-		(1 - model[0]) / model[graphYAxis],		//value of X, when Y = -1
-		(-1 - model[0]) / model[graphYAxis],	//value of X, when Y = +1
-	];
+	var dispProg = 0;
+	var dispPoints = [];
 	
-	console.log(projOnSides);
+	var projOnSides;
+	
+	graphModelCtx.clearRect(0, 0, graphModelCanvas.width, graphModelCanvas.height);
+	
+	if (graphXAxis == 0 && graphYAxis == 0)
+	{
+		//both are the label(?)
+		projOnSides = [
+			[1, 1],
+			[-1, -1]
+		];
+	}
+	else if (graphXAxis == 0)
+	{
+		//x axis is the label
+		projOnSides = [
+			[-1,	(-1 - model[0]) / model[graphYAxis]],	//label set to -1,		calc feature val
+			[1,		(1 - model[0]) / model[graphYAxis]],	//label set to 1,		calc feature val
+			[model[0] - model[graphYAxis],	-1],			//feature set to -1,	calc label val
+			[model[0] + model[graphYAxis],	1]				//feature set to 1,		calc label val
+		];
+	}
+	else if (graphYAxis == 0)
+	{
+		//y axis is the label
+		projOnSides = [
+			[(-1 - model[0]) / model[graphXAxis],	-1],	//label set to -1,		calc feature val
+			[(1 - model[0]) / model[graphXAxis],	1],		//label set to 1,		calc feature val
+			[-1,	model[0] - model[graphXAxis]],			//feature set to -1,	calc label val
+			[1,		model[0] + model[graphXAxis]]			//feature set to 1,		calc label val
+		];
+	}
+	else
+	{
+		//neither is the label (we're done here)
+		return;
+	}
+	
+	for (var i = 0; i < projOnSides.length; i++)
+	{
+		if (projOnSides[i][0] >= -1 && projOnSides[i][0] <= 1 && projOnSides[i][1] >= -1 && projOnSides[i][1] <= 1)
+		{
+			dispPoints[dispProg] = graphPointToDisplayPoint(projOnSides[i][0], projOnSides[i][1]);
+			dispProg++;
+		}
+	}
+	
+	graphModelCtx.strokeStyle = graphModelCol;
+	graphModelCtx.lineWidth = graphModelRad;
+	graphModelCtx.beginPath();
+	graphModelCtx.moveTo(dispPoints[0][0], dispPoints[0][1]);
+	
+	for (var i = 1; i < dispProg; i++)
+	{
+		if(
+			dispPoints[i][0] != dispPoints[i - 1][0] ||
+			dispPoints[i][1] != dispPoints[i - 1][1]
+		)
+		{
+			graphModelCtx.lineTo(dispPoints[i][0], dispPoints[i][1]);
+			i = dispProg;
+		}
+	}
+	
+	graphModelCtx.stroke();
 }
 
 //draws the graph (but not points on the graph)	
