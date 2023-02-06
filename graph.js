@@ -82,4 +82,6 @@ function activateModel()
 	{
 		model[i + 1] = 1.0;
 	}
+	
+	modelActive = true;
 }

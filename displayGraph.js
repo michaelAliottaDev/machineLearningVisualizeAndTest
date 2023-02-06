@@ -113,8 +113,8 @@ function switchToGraphDisplay()
 	graphModelCanvas.height			= graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize;
 	displayContainer.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
 	displayContainer.style.height	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth + graphLocReportTextSize) + "px";
-	commandLineInput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
-	commandLineOutput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
+	//commandLineInput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
+	//commandLineOutput.style.width	= (graphBorder * 2 + graphInnerMargin * 2 + graphSize + graphAxisBarWidth) + "px";
 
 	drawGraph();
 	drawGraphAxisBar();

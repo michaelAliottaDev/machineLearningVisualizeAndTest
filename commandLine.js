@@ -3,7 +3,6 @@
 // record of inputs and responses
 // []	 = line text
 var lineRecord;
-var lineRecordLen;
 
 var priCommands;
 var priCommandAknowlg;
@@ -18,7 +17,6 @@ var commandLineOutput;
 function commandLineInit()
 {
 	lineRecord = [];
-	lineRecordLen = 0;
 	
 	priCommands = [
 		"help",
@@ -26,35 +24,34 @@ function commandLineInit()
 		"load",
 		"show",
 		"clear",
-		"display graph",
-		"display data grid",
+		"display",
 		"select",
 		"activate model",
 		"calc loss"
 	];
 	
 	priCommandAknowlg = [
-		["Read command: Help", ""],
-		["Read command: Save", ""],
-		["Read command: Load", ""],
-		["Read command: Show", ""],
-		["Read command: Clear", ""],
-		["Read command: Display Graph", ""],
-		["Read command: Display Data Grid", ""],
-		["Read command: Select", ""],
-		["Read command: Activate Model", ""],
-		["Read command: Calculate Loss", ""]
+		"Help",
+		"Save",
+		"Load",
+		"Show",
+		"Clear",
+		"Display",
+		"Select",
+		"Activate Model",
+		"Calculate Loss"
 	];
 	
 	expectedArguements = [
 		[],
 		[],
 		[],
-		["s=#", "p"],
-		["g", "c", "a"],
+		["p", "m"],
+		[],
+		["d", "data", "datagrid", "g", "graph"],
+		["#"],
 		[],
 		[],
-		["p=#"],
 		[],
 		[]
 	];
@@ -63,11 +60,12 @@ function commandLineInit()
 		[],
 		[],
 		[],
-		["Start At: ", "Points", "All"],
-		["Graph", "Console", "All"],
+		["Data Points", "Model Values"],
 		[],
-		[],
+		["Data Grid", "Data Grid", "Data Grid", "Graph", "Graph"],
 		["Point: "],
+		[],
+		[],
 		[],
 		[]
 	];
@@ -76,11 +74,12 @@ function commandLineInit()
 		[],
 		[],
 		[],
-		[true,	false,	false],
-		[false, false,	false],
 		[],
 		[],
+		[false,	false,	false,	false,	false],
 		[true],
+		[],
+		[],
 		[],
 		[]
 	];
@@ -95,9 +94,7 @@ function commandLineInit()
 //reads in the command in the command line and does as it says if there is an instruction that matches it
 function doCommand(command)
 {
-	var response = [
-		["Command: \"" + command + "\""]
-	];
+	var acknowledgement;
 	var respLength = 1;
 	var didReq = false;
 	var yesReq = [];
@@ -109,15 +106,15 @@ function doCommand(command)
 	//calls another function to parse the command from raw text
 	var commandAsArray = parseCommand(command);
 	
+	addResponse("Command: \"" + command + "\"");
+	
 	//attempt to parse the command ran an error code
 	if (commandAsArray[0] == "Error Code")
 	{
 		for (var i = 1; i < commandAsArray.length; i++)
 		{
-			response[i] = [commandAsArray[i]];
+			addResponse(commandAsArray[i] + "");
 		}
-		
-		addResponse(response);
 		return;
 	}
 	
@@ -126,9 +123,8 @@ function doCommand(command)
 	{
 		if (commandAsArray[0] == priCommands[i])
 		{
-			//sets response to the acknowledgement statement for the command
-			response[respLength] = priCommandAknowlg[i];
-			respLength++;
+			//prepares an acknowledgement response but waits until after arguements are read to print
+			acknowledgement = "Read command: " + priCommandAknowlg[i] + "";
 			
 			//read arguments and checking if they are expected for that command
 			for (var j = 0; j < commandAsArray[1].length; j++)
@@ -172,7 +168,8 @@ function doCommand(command)
 					yesReq[yesReqLength] = [expectedArguements[i][k - 1]];
 					yesReqLength++;
 					
-					response[respLength - 1][yesReqLength + 1] = expArgTitle[i][k - 1];
+					//adding recognized arguments to the end of the acknowledgement
+					acknowledgement += "\t" + expArgTitle[i][k - 1];
 					
 					if (argVar !== undefined)
 					{
@@ -180,7 +177,7 @@ function doCommand(command)
 						
 						if (expArgTitleVar[i][k - 1])
 						{
-							response[respLength - 1][yesReqLength + 1] += argVar;
+							acknowledgement += argVar;
 						}
 					}
 				}
@@ -193,111 +190,132 @@ function doCommand(command)
 	//listing unrecognized arguments
 	for (var i = 0; i < noReqLength; i++)
 	{
-		response[respLength] = ["Did not recognize argument: \"-" + noReq[i] + "\", (ignoring)"];
-		respLength++;
+		addResponse("Did not recognize argument: \"-" + noReq[i] + "\", (ignoring)");
 	}
 	
 	//Outputing acknowledgement
-	addResponse(response);
-	
-	response = [];
-	respLength = 0;
+	addResponse("\n" + acknowledgement);
 	
 	//runs code specific to commands
-	
-	if (commandAsArray[0] == "help")
+	switch (commandAsArray[0])
 	{
-		//help output
-		response[respLength] = ["help:", "Show a list of commands and what they do"];
-		response[respLength + 1] = ["save:", "Save an xml file of the graph to your local drive"];
-		response[respLength + 2] = ["load:", "Load an xml file of a graph set the current graph to it"];
-		response[respLength + 3] = ["show:", "Output info to the console about something, does nothing without an argument"];
-		response[respLength + 4] = ["clear:", "Clear the graph and the console"];
-		response[respLength + 5] = ["display:", "Switch which set of data is displayed"];
-		response[respLength + 6] = ["select:", "Select one point (deselect all others)"];
-		response[respLength + 7] = ["activate model:", "initializes the model and shows it on the graph"];
-		response[respLength + 7] = ["calc loss:", "calculates loss for the model (also initializes the model if it hasn't already)"];
-
-		addResponse(response);
-	}
-	else if (commandAsArray[0] == "show")
-	{
-		show (yesReq, yesReqLength)
-	}
-	else if (commandAsArray[0] == "select")
-	{
-		if (yesReq[0][0] == "p=#")
-		{
-			if (typeof(yesReq[0][1] - 0) == "number" && yesReq[0][1] - 0 == Math.floor(yesReq[0][1] - 0))
+		case "help":
+			helpMessage();
+			break;
+		case "show":
+			show (yesReq, yesReqLength);
+			break;
+		case "select":
+			if (yesReq[0][0] == "#")
 			{
-				changeSelectedPoint(yesReq[0][1] - 0);
+				if (typeof(yesReq[0][1] - 0) == "number" && yesReq[0][1] - 0 == Math.floor(yesReq[0][1] - 0))
+				{
+					changeSelectedPoint(yesReq[0][1] - 0);
+				}
+				else
+				{
+					addResponse([["Invalid Selection, (Only Integers Accepted)"]]);
+				}
+			}
+			break;
+		case "save":
+			saveFile();
+			addResponse([["Graph Saved to File"]]);
+			break;
+		case "load":
+			openLoadFile();
+			addResponse([["Graph Loaded to Display"]]);
+			break;
+		case "clear":
+			commandLineOutput.innerHTML = "";
+			break;
+		case "display":
+			if (yesReqLength > 0)
+			{
+				if(
+					yesReq[0][0] == "d" ||
+					yesReq[0][0] == "data" ||
+					yesReq[0][0] == "datagrid"
+				)
+				{
+					switchDisplayTo(1);
+					addResponse([["Display set to Data Grid Mode"]]);
+				}
+				else if(
+					yesReq[0][0] == "g" ||
+					yesReq[0][0] == "graph"
+				)
+				{
+					switchDisplayTo(0);
+					addResponse([["Display set to Graph Mode"]]);
+				}
+			}
+			else 
+			{
+				addResponse("This Command Requires an Argument")
+			}
+			break;
+		case "activate model":
+			activateModel();
+			drawModel();
+			addResponse("Model Activated");
+			break;
+		case "calc loss":
+			if (modelActive)
+			{
+				drawLoss();
+				addResponse("Loss Calculated");
 			}
 			else
 			{
-				addResponse([["Invalid Selection, (Only Integers Accepted)"]]);
+				addResponse("You must activate the model first");
 			}
-		}
-	}
-	else if (commandAsArray[0] == "save")
-	{
-		saveFile();
-		addResponse([["Graph Saved to File"]]);
-	}
-	else if (commandAsArray[0] == "load")
-	{
-		openLoadFile();
-		addResponse([["Graph Loaded to Display"]]);
-	}
-	else if (commandAsArray[0] == "clear")
-	{
-		for (var i = 0; i < yesReqLength; i++)
-		{
-			if (yesReq[i] == "g" || yesReq[i] == "a")
+			break;
+		case "add feature":
+			featureCount++;
+			break;
+		case "remove feature":
+			featureCount--;
+			
+			for (var i = 0; i < graphPointsLen; i++)
 			{
-				clearGraph();
+				graphPoints[i][featureCount] = undefined;
 			}
 			
-			if (yesReq[i] == "c" || yesReq[i] == "a")
-			{
-				lineRecord = [];
-				lineRecordLen = 0;
-				
-				printRecord();
-			}
-		}
-		
-		if (yesReqLength == 0)
-		{
-			clearGraph();
-			
-			lineRecord = [];
-			lineRecordLen = 0;
-			
-			printRecord();
-		}
+			model[featureCount] = undefined;
+			break;
+		default:
+			break;
 	}
-	else if (commandAsArray[0] == "display graph")
+}
+
+function helpMessage()
+{
+	//help output
+	var helpMes = [
+		"===Usability Commands===",
+		"help:\tShow a list of commands and what they do",
+		"",
+		"===Save/Load Commands===",
+		"save:\tSave an xml file of the graph to your local drive",
+		"load:\tLoad an xml file of a graph set the current graph to it",
+		"",
+		"===Console Commands===",
+		"show:\tOutput info to the console about something, does nothing without an argument",
+		"clear:\tclearthe console",
+		"",
+		"===Integrated Commands===",
+		"add feature:\tIncrease the number of features by one (there will still be no data for that feature)",
+		"remove feature:\tDecrease the number of features by one (any data with that feature will be deleted)",
+		"display:\tSwitch which set of data is displayed",
+		"select:\t\tSelect one point (deselect all others)",
+		"activate model:\tinitializes the model and shows it on the graph",
+		"calc loss:\tcalculates loss for the model"
+	];
+	
+	for (var i = helpMes.length - 1; i >= 0; i--)
 	{
-		switchDisplayTo(0);
-		addResponse([["Display set to Graph Mode"]]);
-	}
-	else if (commandAsArray[0] == "display data grid")
-	{
-		switchDisplayTo(1);
-		addResponse([["Display set to Data Grid Mode"]]);
-	}
-	else if (commandAsArray[0] == "activate model")
-	{
-		activateModel();
-		drawModel();
-		addResponse([["Model Activated"]]);
-	}
-	else if (commandAsArray[0] == "calc loss")
-	{
-		activateModel();
-		drawModel();
-		drawLoss();
-		addResponse([["Model Activated"]]);
+		addResponse(helpMes[i]);
 	}
 }
 
@@ -358,7 +376,7 @@ function show(args, argsLen)
 	var tar = [];
 	var tarSet = false;
 	var startAt = 0;
-	var response = [];
+	var response = "";
 	
 	for (var i = 0; i < argsLen; i++)
 	{
@@ -369,48 +387,66 @@ function show(args, argsLen)
 				tar = "p";
 				tarSet = true;
 			}
-		}
-		
-		if (args[i][0] == "s=#")
-		{
-			startAt = args[i][1] - 0;
+			else if (args[i][0] == "m")
+			{
+				tar = "m";
+				tarSet = true;
+			}
 		}
 	}
 	
 	if (!tarSet)
 	{
-		addResponse([["Nothing Selected (try an argument)"]]);
+		addResponse("Nothing Selected (try an argument)");
 		return;
 	}
 	
 	switch (tar)
 	{
 		case "p":
-			response[0] = ["Features: " + featureCount];
-			response[1] = ["Points: " + graphPointsLen];
+			response += "Features: " + featureCount + "\n";
+			response += "Points: " + graphPointsLen + "\n";
 			
-			for (var i = 0; i < 18 && i + startAt < graphPointsLen; i++)
+			for (var i = 0; i + startAt < graphPointsLen; i++)
 			{
-				response[2 + i] = ["Point[" + (i + startAt) + "]:"];
+				response += "Point[" + (i + startAt) + "]:\t";
 				
 				for (var j = 0; j < graphPoints[i + startAt].length; j++)
 				{
 					if (graphPoints[i][j] !== undefined)
 					{
-						response[2 + i][1 + j] = graphPoints[i + startAt][j] + "";
+						response += graphPoints[i + startAt][j] + "\t";
 					}
 					else
 					{
-							response[2 + i][1 + j] = "--";
+						response += "--\t";
 					}
 				}
 				
+				response += "\n";
 			}
 			
 			addResponse(response);
 			break;
+		case "m":
+			if (modelActive)
+			{
+				response = "Bias:\t\ttotal\t+" + model[0] + "\n";
+				
+				for (var i = 1; i <= featureCount; i++)
+				{
+					response += "Feature[" + i + "]:\tF" + i + " \tx" + model[i] + "\n";
+				}
+				
+				addResponse(response);
+			}
+			else
+			{
+				addResponse("You must activate the model before I can give you info about it");
+			}
+			break;
 		default:
-			addResponse(["Invalid Data Selection"]);
+			addResponse("Invalid Data Selection");
 			break;
 	}
 }
@@ -418,57 +454,7 @@ function show(args, argsLen)
 //refines response a bit and then outputs it
 function addResponse(response)
 {
-	var responseOffset = response.length + 1;
-	
-	if (lineRecordLen + responseOffset >= 25)
-	{
-		lineRecordLen = 25 - responseOffset;
-	}
-	
-	for (var i = 0; i < lineRecordLen; i++)
-	{
-		lineRecord[lineRecordLen - 1 + responseOffset - i] = [];
-		
-		for (var j = 0; j < lineRecord[lineRecordLen - 1 - i].length; j++)
-		{
-			lineRecord[lineRecordLen - 1 + responseOffset - i][j] = lineRecord[lineRecordLen - 1 - i][j];
-		}
-	}
-	
-	for (var i = 0; i < responseOffset - 1; i++)
-	{
-		lineRecord[i] = [];
-		
-		for (var j = 0; j < response[i].length; j++)
-		{
-			lineRecord[i][j] = response[i][j];
-		}
-	}
-	
-	lineRecord[responseOffset - 1] = [""];
-	
-	lineRecordLen += responseOffset;
-	
-	printRecord();
-}
-
-//console output
-function printRecord()
-{
-	var resp = "";
-	
-	for (var i = 0; i < lineRecordLen; i++)
-	{
-		for (var j = 0; j < lineRecord[i].length; j++)
-		{
-			resp += lineRecord[i][j];
-			resp += "\t";
-		}
-		
-		resp += "\n"
-	}
+	var resp = response + "\n";
 	
 	commandLineOutput.innerHTML = resp + commandLineOutput.innerHTML;
-	lineRecord = [];
-	lineRecordLen = 0;
 }

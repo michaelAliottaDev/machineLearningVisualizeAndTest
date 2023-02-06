@@ -86,8 +86,8 @@ function switchToDataGridDisplay()
 	dataGridHiLightCanvas.height	= dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight;
 	displayContainer.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
 	displayContainer.style.height	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridHeight) + "px";
-	commandLineInput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
-	commandLineOutput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
+	//commandLineInput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
+	//commandLineOutput.style.width	= (dataGridBorder * 2 + dataGridInnerMargin * 2 + dataGridWidth) + "px";
 	
 	drawDataGrid();
 	highlightSelected();
