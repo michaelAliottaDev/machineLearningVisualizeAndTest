@@ -119,6 +119,9 @@ function highlightSelected()
 
 function drawDataGrid()
 {
+	dataGridBkgrnCtx.clearRect(0, 0, dataGridBkgrnCanvas.width, dataGridBkgrnCanvas.height);
+	dataGridValuesCtx.clearRect(0, 0, dataGridValuesCanvas.width, dataGridValuesCanvas.height);
+	
 	dataGridBkgrnCtx.fillStyle = dataGridBorderCol;
 	fillRect(
 		dataGridBkgrnCtx, 

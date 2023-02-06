@@ -27,7 +27,9 @@ function commandLineInit()
 		"display",
 		"select",
 		"activate model",
-		"calc loss"
+		"calc loss",
+		"add feature",
+		"remove feature"
 	];
 	
 	priCommandAknowlg = [
@@ -39,7 +41,9 @@ function commandLineInit()
 		"Display",
 		"Select",
 		"Activate Model",
-		"Calculate Loss"
+		"Calculate Loss",
+		"Add Feature",
+		"Remove Feature"
 	];
 	
 	expectedArguements = [
@@ -210,11 +214,11 @@ function doCommand(command)
 			{
 				if (typeof(yesReq[0][1] - 0) == "number" && yesReq[0][1] - 0 == Math.floor(yesReq[0][1] - 0))
 				{
-					changeSelectedPoint(yesReq[0][1] - 0);
+					changeSelectedPoint(yesReq[0][1] - 1);
 				}
 				else
 				{
-					addResponse([["Invalid Selection, (Only Integers Accepted)"]]);
+					addResponse("Invalid Selection, (Only Integers Accepted)");
 				}
 			}
 			break;
@@ -273,16 +277,29 @@ function doCommand(command)
 			break;
 		case "add feature":
 			featureCount++;
+			
+			drawGraphAxisBar();
+			drawDataGrid();
+			
+			addResponse("Number of Features Increased to " + featureCount);
 			break;
 		case "remove feature":
 			featureCount--;
 			
 			for (var i = 0; i < graphPointsLen; i++)
 			{
-				graphPoints[i][featureCount] = undefined;
+				graphPoints[i][featureCount + 1] = undefined;
 			}
 			
-			model[featureCount] = undefined;
+			if (modelActive)
+			{
+				model[featureCount + 1] = undefined;
+			}
+			
+			drawGraphAxisBar();
+			drawDataGrid();
+			
+			addResponse("Number of Features Reduced to " + featureCount);
 			break;
 		default:
 			break;
