@@ -74,7 +74,7 @@ function inputHandler(input)
 							temp[0], 
 							temp[1]
 						);
-						drawPointOnGraph(graphPointsLen - 1);
+						drawAllPointsOnGraph();
 					}
 				}
 				if (

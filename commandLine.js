@@ -29,7 +29,8 @@ function commandLineInit()
 		"activate model",
 		"calc loss",
 		"add feature",
-		"remove feature"
+		"remove feature",
+		"epoch"
 	];
 	
 	priCommandAknowlg = [
@@ -43,7 +44,8 @@ function commandLineInit()
 		"Activate Model",
 		"Calculate Loss",
 		"Add Feature",
-		"Remove Feature"
+		"Remove Feature",
+		"Epoch"
 	];
 	
 	expectedArguements = [
@@ -54,6 +56,7 @@ function commandLineInit()
 		[],
 		["d", "data", "datagrid", "g", "graph"],
 		["#"],
+		[],
 		[],
 		[],
 		[],
@@ -71,6 +74,7 @@ function commandLineInit()
 		[],
 		[],
 		[],
+		[],
 		[]
 	];
 	
@@ -82,6 +86,7 @@ function commandLineInit()
 		[],
 		[false,	false,	false,	false,	false],
 		[true],
+		[],
 		[],
 		[],
 		[],
@@ -269,6 +274,18 @@ function doCommand(command)
 			{
 				drawLoss();
 				addResponse("Loss Calculated");
+			}
+			else
+			{
+				addResponse("You must activate the model first");
+			}
+			break;
+		case "epoch":
+			if (modelActive)
+			{
+				calcApplyGradientToModel();
+				drawModel();
+				addResponse("Executed One Epoch");
 			}
 			else
 			{

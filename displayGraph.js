@@ -23,6 +23,7 @@ var graphTextCol;
 var graphTriCol;
 var graphPointsCol;
 var graphPointsSelCol;
+var graphPointsGhostSelCol;
 var graphModelCol;
 var graphLossCol;
 
@@ -76,6 +77,7 @@ function graphDisplayInit()
 	//graphPointsSelCol = "#ffa64d";
 	graphPointsCol = "#000000";
 	graphPointsSelCol = "#80ff80";
+	graphPointsGhostSelCol = "#bfffbf";
 	graphModelCol = "#00cccc";
 	graphLossCol = "#ff3333";
 	
@@ -551,16 +553,51 @@ function drawAllPointsOnGraph()
 //draws only the point at the index
 function drawPointOnGraph(index)
 {
+	var tempPoint;
+	
 	if (
-		graphPoints[index][graphXAxis] == undefined ||
-		graphPoints[index][graphYAxis] == undefined
+		graphPoints[index][graphXAxis] === undefined ||
+		graphPoints[index][graphYAxis] === undefined
 	)
 	{
+		graphPointsCtx.fillStyle = graphPointsGhostSelCol;
 		
+		if (
+			index == selectedPoint &&
+			graphPoints[index][graphXAxis] !== undefined
+		)
+		{
+			tempPoint = graphPointToDisplayPoint(
+				graphPoints[index][graphXAxis], 
+				0
+			);
+			
+			fillRect(
+				graphPointsCtx,
+				tempPoint[0] - graphPointRad, 		graphBorder,
+				graphPointRad * 2.0,				graphSize
+			);
+		}
+		else if (
+			index == selectedPoint &&
+			graphPoints[index][graphYAxis] !== undefined
+		)
+		{
+			tempPoint = graphPointToDisplayPoint(
+				0, 
+				graphPoints[index][graphYAxis]
+			);
+			
+			fillRect(
+				graphPointsCtx,
+				graphBorder + graphAxisBarWidth,	tempPoint[1] - graphPointRad,
+				graphSize,							graphPointRad * 2.0
+			);
+		}
 	}
 	else
 	{
-		var tempPoint = graphPointToDisplayPoint(
+		tempPoint = graphPointToDisplayPoint(
 			graphPoints[index][graphXAxis], 
 			graphPoints[index][graphYAxis]
 		);
