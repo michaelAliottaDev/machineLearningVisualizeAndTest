@@ -345,6 +345,7 @@ function helpMessage()
 		"select:\t\tSelect one point (deselect all others)",
 		"activate model:\tinitializes the model and shows it on the graph",
 		"calc loss:\tcalculates loss for the model"
+		"epoch:\t\tExecute one machine learning epoch"
 	];
 	
 	for (var i = helpMes.length - 1; i >= 0; i--)
